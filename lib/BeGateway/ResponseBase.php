@@ -1,41 +1,78 @@
 <?php
+
 namespace BeGateway;
 
-abstract class ResponseBase {
+/**
+ * Class ResponseBase
+ *
+ * @package BeGateway
+ */
+abstract class ResponseBase
+{
+    /**
+     * @var mixed
+     */
+    protected $_response;
+    /**
+     * @var mixed
+     */
+    protected $_response_array;
 
-  protected $_response;
-  protected $_responseArray;
+    /**
+     * ResponseBase constructor.
+     *
+     * @param $message
+     */
+    public function __construct($message)
+    {
+        $this->_response = json_decode($message);
+        $this->_response_array = json_decode($message, true);
+    }
 
-  public function __construct($message){
-    $this->_response = json_decode($message);
-    $this->_responseArray = json_decode($message, true);
-  }
-  public abstract function isSuccess();
+    /**
+     * @return bool
+     */
+    public abstract function isSuccess();
 
-  public function isError() {
-    if (!is_object($this->getResponse()))
-      return true;
+    /**
+     * @return bool
+     */
+    public function isError()
+    {
+        if (!is_object($this->getResponse()))
+            return true;
 
-    if (isset($this->getResponse()->errors))
-      return true;
+        if (isset($this->getResponse()->errors))
+            return true;
 
-    if (isset($this->getResponse()->response))
-      return true;
+        if (isset($this->getResponse()->response))
+            return true;
 
-    return false;
-  }
+        return false;
+    }
 
-  public function isValid() {
-    return !($this->_response === false || $this->_response == null);
-  }
+    /**
+     * @return bool
+     */
+    public function isValid()
+    {
+        return !($this->_response === false || $this->_response == null);
+    }
 
-  public function getResponse() {
-    return $this->_response;
-  }
+    /**
+     * @return mixed
+     */
+    public function getResponse()
+    {
+        return $this->_response;
+    }
 
-  public function getResponseArray() {
-    return $this->_responseArray;
-  }
-
+    /**
+     * @return mixed
+     */
+    public function getResponseArray()
+    {
+        return $this->_response_array;
+    }
 }
-?>
+

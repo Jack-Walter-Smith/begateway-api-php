@@ -1,23 +1,45 @@
 <?php
+
 namespace BeGateway;
 
-class RefundOperation extends ChildTransaction {
-  protected $_reason;
+/**
+ * Class RefundOperation
+ *
+ * @package BeGateway
+ */
+class RefundOperation extends ChildTransaction
+{
+    /**
+     * @var string
+     */
+    protected $_reason;
 
-  public function setReason($reason) {
-    $this->_reason = $reason;
-  }
+    /**
+     * @param string $reason
+     */
+    public function setReason($reason)
+    {
+        $this->_reason = $reason;
+    }
 
-  public function getReason() {
-    return $this->_reason;
-  }
+    /**
+     * @return string
+     */
+    public function getReason()
+    {
+        return $this->_reason;
+    }
 
-  protected function _buildRequestMessage() {
-    $request = parent::_buildRequestMessage();
+    /**
+     * @return array[]|mixed
+     */
+    protected function _buildRequestMessage()
+    {
+        $request = parent::_buildRequestMessage();
 
-    $request['request']['reason'] = $this->getReason();
+        $request['request']['reason'] = $this->getReason();
 
-    return $request;
-  }
+        return $request;
+    }
 }
-?>
+

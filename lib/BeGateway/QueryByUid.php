@@ -1,20 +1,48 @@
 <?php
+
 namespace BeGateway;
 
-class QueryByUid extends ApiAbstract {
-  protected $_uid;
+/**
+ * Class QueryByUid
+ *
+ * @package BeGateway
+ */
+class QueryByUid extends ApiAbstract
+{
+    /**
+     * @var string
+     */
+    protected $_uid;
 
-  protected function _endpoint() {
-    return Settings::$gatewayBase . '/transactions/' . $this->getUid();
-  }
-  public function setUid($uid) {
-    $this->_uid = $uid;
-  }
-  public function getUid() {
-    return $this->_uid;
-  }
-  protected function _buildRequestMessage() {
-    return '';
-  }
+    /**
+     * @return string
+     */
+    protected function _endpoint()
+    {
+        return Settings::$gatewayBase . '/transactions/' . $this->getUid();
+    }
+
+    /**
+     * @param string $uid
+     */
+    public function setUid($uid)
+    {
+        $this->_uid = $uid;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUid()
+    {
+        return $this->_uid;
+    }
+
+    /**
+     * @return mixed|string
+     */
+    protected function _buildRequestMessage()
+    {
+        return '';
+    }
 }
-?>

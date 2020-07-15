@@ -21,12 +21,12 @@ class ProductTest extends TestCase {
     $auth = $this->getTestObjectInstance();
     $date = '2020-12-30 23:21:46';
     $date_iso8601 = date(DATE_ISO8601, strtotime($date));
-    $auth->setExpiryDate($date);
-    $this->assertEqual($auth->getExpiryDate(), $date_iso8601);
+    $auth->setExpiredAt($date);
+    $this->assertEqual($auth->getExpiredAt(), $date_iso8601);
 
     $date = NULL;
-    $auth->setExpiryDate($date);
-    $this->assertEqual($auth->getExpiryDate(), NULL);
+    $auth->setExpiredAt($date);
+    $this->assertEqual($auth->getExpiredAt(), NULL);
   }
 
   public function test_setUrls() {
@@ -203,7 +203,7 @@ class ProductTest extends TestCase {
     $transaction->setReturnUrl($url . '/r');
     $transaction->setFailUrl($url . '/f');
     $transaction->setLanguage('zh');
-    $transaction->setExpiryDate('2030-12-31T00:21:46+0300');
+    $transaction->setExpiredAt('2030-12-31T00:21:46+0300');
     $transaction->setTestMode(true);
 
     return $transaction;

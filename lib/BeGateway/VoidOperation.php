@@ -1,6 +1,12 @@
 <?php
+
 namespace BeGateway;
 
-class VoidOperation extends ChildTransaction {
+/**
+ * Class VoidOperation
+ *
+ * @package BeGateway
+ */
+class VoidOperation extends ChildTransaction
+{
 }
-?>
