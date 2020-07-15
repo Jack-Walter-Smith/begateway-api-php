@@ -730,7 +730,7 @@ class GetPaymentToken extends ApiAbstract
     /**
      * @param array<Base> $methods
      */
-    public function setPaymentMethod($methods)
+    public function setPaymentMethods($methods)
     {
         foreach ($methods as $method) {
             if ($method instanceof Base) {
