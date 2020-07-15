@@ -296,10 +296,18 @@ class GetPaymentToken extends ApiAbstract
 
     /**
      * @param string $transactionType
+     *
+     * @throws \Exception
      */
     public function setTransactionType($transactionType)
     {
-        $this->_transaction_type = $transactionType;
+        $method = "set{$transactionType}TransactionType";
+
+        if (method_exists($this, $method)) {
+            $this->{$method}();
+        } else {
+            throw new \Exception("Transaction type '$transactionType' cannot be set in " . __CLASS__);
+        }
     }
 
     /**
