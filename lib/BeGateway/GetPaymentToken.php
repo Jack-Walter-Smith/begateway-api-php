@@ -387,12 +387,10 @@ class GetPaymentToken extends ApiAbstract
 
     /**
      * @param array $fields
-     *
-     * @return array
      */
     public function setReadonly($fields)
     {
-        return array_unique(array_merge_recursive($this->_readonly, $fields));
+        $this->_readonly = array_unique(array_merge_recursive($this->_readonly, $fields));
     }
 
     /**
@@ -405,12 +403,10 @@ class GetPaymentToken extends ApiAbstract
 
     /**
      * @param array $fields
-     *
-     * @return array
      */
     public function setVisible($fields)
     {
-        return array_unique(array_merge_recursive($this->_visible, $fields));
+        $this->_visible = array_unique(array_merge_recursive($this->_visible, $fields));
     }
 
     /**

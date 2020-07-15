@@ -373,12 +373,10 @@ class Product extends ApiAbstract
 
     /**
      * @param array $fields
-     *
-     * @return array
      */
     public function setVisible($fields)
     {
-        return array_unique(array_merge_recursive($this->_visible, $fields));
+        $this->_visible = array_unique(array_merge_recursive($this->_visible, $fields));
     }
 
     /**
