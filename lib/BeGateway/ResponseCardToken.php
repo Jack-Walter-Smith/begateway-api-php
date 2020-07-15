@@ -17,7 +17,7 @@ class ResponseCardToken extends ResponseBase
     /**
      * ResponseCardToken constructor.
      *
-     * @param $message
+     * @param string $message
      */
     public function __construct($message)
     {

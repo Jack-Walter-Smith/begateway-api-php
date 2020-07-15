@@ -780,8 +780,8 @@ class GetPaymentToken extends ApiAbstract
     }
 
     /**
-     * @param $array
-     * @param $value
+     * @param array $array
+     * @param string $value
      *
      * @return mixed
      */

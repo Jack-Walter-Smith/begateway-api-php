@@ -82,7 +82,7 @@ class Logger
     }
 
     /**
-     * @param $level
+     * @param int $level
      */
     public function setLogLevel($level)
     {
@@ -106,7 +106,7 @@ class Logger
     }
 
     /**
-     * @param $path
+     * @param string $path
      */
     public function setOutputFile($path)
     {
@@ -114,7 +114,7 @@ class Logger
     }
 
     /**
-     * @param $level
+     * @param int $level
      *
      * @return string
      * @throws \Exception
@@ -149,7 +149,7 @@ class Logger
     }
 
     /**
-     * @param $message
+     * @param string $message
      */
     private function sendToFile($message)
     {
@@ -159,7 +159,7 @@ class Logger
     }
 
     /**
-     * @param $message
+     * @param string $message
      *
      * @return string|string[]|null
      */

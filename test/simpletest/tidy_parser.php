@@ -41,7 +41,7 @@ class SimpleTidyPageBuilder {
 
     /**
      *    Reads the raw content the page using HTML Tidy.
-     *    @param $response SimpleHttpResponse  Fetched response.
+     *    @param SimpleHttpResponse $response Fetched response.
      *    @return SimplePage                   Newly parsed page.
      */
     function parse($response) {

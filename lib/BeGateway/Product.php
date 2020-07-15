@@ -145,7 +145,7 @@ class Product extends ApiAbstract
     }
 
     /**
-     * @param $name
+     * @param string $name
      */
     public function setName($name)
     {
@@ -161,7 +161,7 @@ class Product extends ApiAbstract
     }
 
     /**
-     * @param $description
+     * @param string $description
      */
     public function setDescription($description)
     {
@@ -177,7 +177,7 @@ class Product extends ApiAbstract
     }
 
     /**
-     * @param $quantity
+     * @param int $quantity
      */
     public function setQuantity($quantity)
     {
@@ -225,7 +225,7 @@ class Product extends ApiAbstract
     }
 
     /**
-     * @param $notification_url
+     * @param string $notification_url
      */
     public function setNotificationUrl($notification_url)
     {
@@ -241,7 +241,7 @@ class Product extends ApiAbstract
     }
 
     /**
-     * @param $success_url
+     * @param string $success_url
      */
     public function setSuccessUrl($success_url)
     {
@@ -257,7 +257,7 @@ class Product extends ApiAbstract
     }
 
     /**
-     * @param $fail_url
+     * @param string $fail_url
      */
     public function setFailUrl($fail_url)
     {
@@ -273,7 +273,7 @@ class Product extends ApiAbstract
     }
 
     /**
-     * @param $return_url
+     * @param string $return_url
      */
     public function setReturnUrl($return_url)
     {
@@ -329,7 +329,7 @@ class Product extends ApiAbstract
     }
 
     /**
-     * @param $language_code
+     * @param string $language_code
      */
     public function setLanguage($language_code)
     {
@@ -351,7 +351,7 @@ class Product extends ApiAbstract
     # date when payment expires for payment
     # date is in ISO8601 format
     /**
-     * @param $date
+     * @param string $date
      */
     public function setExpiredAt($date)
     {
@@ -567,8 +567,8 @@ class Product extends ApiAbstract
     }
 
     /**
-     * @param $array
-     * @param $value
+     * @param array $array
+     * @param string $value
      *
      * @return mixed
      */

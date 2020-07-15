@@ -60,7 +60,7 @@ class AuthorizationOperation extends ApiAbstract
     }
 
     /**
-     * @param $description
+     * @param string $description
      */
     public function setDescription($description)
     {
@@ -76,7 +76,7 @@ class AuthorizationOperation extends ApiAbstract
     }
 
     /**
-     * @param $tracking_id
+     * @param string $tracking_id
      */
     public function setTrackingId($tracking_id)
     {
@@ -92,7 +92,7 @@ class AuthorizationOperation extends ApiAbstract
     }
 
     /**
-     * @param $notification_url
+     * @param string $notification_url
      */
     public function setNotificationUrl($notification_url)
     {
@@ -108,7 +108,7 @@ class AuthorizationOperation extends ApiAbstract
     }
 
     /**
-     * @param $return_url
+     * @param string $return_url
      */
     public function setReturnUrl($return_url)
     {

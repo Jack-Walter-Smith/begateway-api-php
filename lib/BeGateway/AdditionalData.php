@@ -23,7 +23,7 @@ class AdditionalData
     protected $_meta = array();
 
     /**
-     * @param $receipt
+     * @param array $receipt
      */
     public function setReceipt($receipt)
     {
@@ -39,7 +39,7 @@ class AdditionalData
     }
 
     /**
-     * @param $contract
+     * @param array $contract
      */
     public function setContract($contract)
     {
@@ -55,7 +55,7 @@ class AdditionalData
     }
 
     /**
-     * @param $meta
+     * @param array $meta
      */
     public function setMeta($meta)
     {

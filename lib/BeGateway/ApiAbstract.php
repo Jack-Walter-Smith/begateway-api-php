@@ -77,7 +77,7 @@ abstract class ApiAbstract
     }
 
     /**
-     * @param $language_code
+     * @param string $language_code
      */
     public function setLanguage($language_code)
     {
@@ -97,7 +97,7 @@ abstract class ApiAbstract
     }
 
     /**
-     * @param $timeout
+     * @param int $timeout
      */
     public function setTimeoutConnect($timeout)
     {
@@ -105,7 +105,7 @@ abstract class ApiAbstract
     }
 
     /**
-     * @param $timeout
+     * @param int $timeout
      */
     public function setTimeoutRead($timeout)
     {
