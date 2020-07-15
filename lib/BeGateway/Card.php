@@ -1,88 +1,236 @@
 <?php
+
 namespace BeGateway;
 
-class Card {
-  protected $_card_number;
-  protected $_card_holder;
-  protected $_card_exp_month;
-  protected $_card_exp_year;
-  protected $_card_cvc;
-  protected $_first_1;
-  protected $_last_4;
-  protected $_brand;
-  protected $_card_token = null;
-  protected $_card_skip_threed_secure = false;
-  protected $_is_encrypted = false;
+/**
+ * Class Card
+ *
+ * @package BeGateway
+ */
+class Card
+{
+    /**
+     * @var string
+     */
+    protected $_card_number;
+    /**
+     * @var string
+     */
+    protected $_card_holder;
+    /**
+     * @var string
+     */
+    protected $_card_exp_month;
+    /**
+     * @var string
+     */
+    protected $_card_exp_year;
+    /**
+     * @var string
+     */
+    protected $_card_cvc;
+    /**
+     * @var string
+     */
+    protected $_first_one;
+    /**
+     * @var string
+     */
+    protected $_last_four;
+    /**
+     * @var string
+     */
+    protected $_brand;
+    /**
+     * @var null|string
+     */
+    protected $_card_token = null;
+    /**
+     * @var bool
+     */
+    protected $_skip_three_d_secure = false;
+    /**
+     * @var bool
+     */
+    protected $_encrypted = false;
 
-  public function setCardNumber($number) {
-    $this->_card_number = $number;
-  }
-  public function getCardNumber() {
-    return $this->_card_number;
-  }
-
-  public function setCardHolder($holder) {
-    $this->_card_holder = $holder;
-  }
-  public function getCardHolder() {
-    return $this->_card_holder;
-  }
-
-  public function setCardExpMonth($exp_month) {
-    if (preg_match('/^\d+/', $exp_month) == 1) {
-      $this->_card_exp_month = sprintf('%02d', $exp_month);
-    } else {
-      $this->_card_exp_month = $exp_month;
+    /**
+     * @return bool
+     */
+    public function isEncrypted()
+    {
+        return $this->_encrypted;
     }
-  }
-  public function getCardExpMonth() {
-    return $this->_card_exp_month;
-  }
 
-  public function setCardExpYear($exp_year) {
-    $this->_card_exp_year = $exp_year;
-  }
-  public function getCardExpYear() {
-    return $this->_card_exp_year;
-  }
+    /**
+     * @param bool $encrypted
+     */
+    public function setEncrypted($encrypted)
+    {
+        $this->_encrypted = $encrypted;
+    }
 
-  public function setCardCvc($cvc) {
-    $this->_card_cvc = $cvc;
-  }
-  public function getCardCvc() {
-    return $this->_card_cvc;
-  }
+    /**
+     * @param string $number
+     */
+    public function setCardNumber($number)
+    {
+        $this->_card_number = $number;
+    }
 
-  public function setCardToken($token) {
-    $this->_card_token = $token;
-  }
-  public function getCardToken() {
-    return $this->_card_token;
-  }
+    /**
+     * @return string
+     */
+    public function getCardNumber()
+    {
+        return $this->_card_number;
+    }
 
-  public function setSkip3D($skip = false) {
-    $this->_card_skip_threed_secure = $skip;
-  }
-  public function getSkip3D() {
-    return $this->_card_skip_threed_secure;
-  }
+    /**
+     * @param string $holder
+     */
+    public function setCardHolder($holder)
+    {
+        $this->_card_holder = $holder;
+    }
 
-  public function setBrand($brand) {
-    $this->_brand = $brand;
-  }
-  public function getBrand() {
-    return $this->_brand;
-  }
-  public function setFirst_1($digit) {
-    $this->_first_1 = $digit;
-  }
-  public function getFirst_1() {
-    return $this->_first_1;
-  }
-  public function setLast_4($digits) {
-    $this->_last_4 = $digits;
-  }
-  public function getLast_4() {
-    return $this->_last_4;
-  }
+    /**
+     * @return string
+     */
+    public function getCardHolder()
+    {
+        return $this->_card_holder;
+    }
+
+    /**
+     * @param string $exp_month
+     */
+    public function setCardExpMonth($exp_month)
+    {
+        if (preg_match('/^\d+/', $exp_month) == 1) {
+            $this->_card_exp_month = sprintf('%02d', $exp_month);
+        } else {
+            $this->_card_exp_month = $exp_month;
+        }
+    }
+
+    /**
+     * @return string
+     */
+    public function getCardExpMonth()
+    {
+        return $this->_card_exp_month;
+    }
+
+    /**
+     * @param string $exp_year
+     */
+    public function setCardExpYear($exp_year)
+    {
+        $this->_card_exp_year = $exp_year;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCardExpYear()
+    {
+        return $this->_card_exp_year;
+    }
+
+    /**
+     * @param string $cvc
+     */
+    public function setCardCvc($cvc)
+    {
+        $this->_card_cvc = $cvc;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCardCvc()
+    {
+        return $this->_card_cvc;
+    }
+
+    /**
+     * @param string $token
+     */
+    public function setCardToken($token)
+    {
+        $this->_card_token = $token;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getCardToken()
+    {
+        return $this->_card_token;
+    }
+
+    /**
+     * @param bool $skip
+     */
+    public function setSkipThreeDSecure($skip = false)
+    {
+        $this->_skip_three_d_secure = $skip;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getSkipThreeDSecure()
+    {
+        return $this->_skip_three_d_secure;
+    }
+
+    /**
+     * @param string $brand
+     */
+    public function setBrand($brand)
+    {
+        $this->_brand = $brand;
+    }
+
+    /**
+     * @return string
+     */
+    public function getBrand()
+    {
+        return $this->_brand;
+    }
+
+    /**
+     * @param string $digit
+     */
+    public function setFirstOne($digit)
+    {
+        $this->_first_one = $digit;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFirstOne()
+    {
+        return $this->_first_one;
+    }
+
+    /**
+     * @param string $digits
+     */
+    public function setLastFour($digits)
+    {
+        $this->_last_four = $digits;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLastFour()
+    {
+        return $this->_last_four;
+    }
 }

@@ -16,8 +16,8 @@ class ResponseCardToken extends ResponseBase {
       $this->card->setCardExpMonth($this->getResponse()->exp_month);
       $this->card->setCardExpYear($this->getResponse()->exp_year);
       $this->card->setBrand($this->getResponse()->brand);
-      $this->card->setFirst_1($this->getResponse()->first_1);
-      $this->card->setLast_4($this->getResponse()->last_4);
+      $this->card->setFirstOne($this->getResponse()->first_1);
+      $this->card->setLastFour($this->getResponse()->last_4);
     }
   }
 

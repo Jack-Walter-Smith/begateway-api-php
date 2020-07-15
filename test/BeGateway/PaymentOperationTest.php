@@ -138,7 +138,7 @@ class PaymentOperationTest extends TestCase {
     $auth->card->setCardExpYear(null);
     $auth->card->setCardCvc(null);
     $auth->card->setCardToken('12345');
-    $auth->card->setSkip3D(true);
+    $auth->card->setSkipThreeDSecure(true);
 
 
     $request = $method->invoke($auth, '_buildRequestMessage');
@@ -199,7 +199,7 @@ class PaymentOperationTest extends TestCase {
     $auth->card->setCardExpYear('$begatewaycsejs_1_0_0$2030');
     $auth->card->setCardCvc('$begatewaycsejs_1_0_0$BBBBBB');
     $auth->card->setCardToken('dddddd');
-    $auth->card->setSkip3D(true);
+    $auth->card->setSkipThreeDSecure(true);
 
     $reflection = new \ReflectionClass( 'BeGateway\AuthorizationOperation');
     $method = $reflection->getMethod('_buildRequestMessage');
