@@ -21,12 +21,12 @@ class GetPaymentTokenTest extends TestCase {
     $auth = $this->getTestObjectInstance();
     $date = '2020-12-30 23:21:46';
     $date_iso8601 = date(DATE_ISO8601, strtotime($date));
-    $auth->setExpiredDate($date);
-    $this->assertEqual($auth->getExpiredDate(), $date_iso8601);
+    $auth->setExpiredAt($date);
+    $this->assertEqual($auth->getExpiredAt(), $date_iso8601);
 
     $date = NULL;
-    $auth->setExpiredDate($date);
-    $this->assertEqual($auth->getExpiredDate(), NULL);
+    $auth->setExpiredAt($date);
+    $this->assertEqual($auth->getExpiredAt(), NULL);
   }
 
   public function test_setUrls() {
@@ -394,7 +394,7 @@ class GetPaymentTokenTest extends TestCase {
     $transaction->setDeclineUrl($url . '/d' );
     $transaction->setFailUrl($url . '/f' );
     $transaction->setLanguage('zh');
-    $transaction->setExpiredDate('2030-12-31T00:21:46+0300');
+    $transaction->setExpiredAt('2030-12-31T00:21:46+0300');
     $transaction->setTestMode(true);
 
     $transaction->customer->setFirstName('John');

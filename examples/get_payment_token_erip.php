@@ -34,7 +34,7 @@ $transaction->setFailUrl('http://www.example.com/fail');
 $transaction->setCancelUrl('http://www.example.com/cancel');
 
 # No available to make payment for the order in 2 days
-$transaction->setExpiredDate(date("Y-m-d", 3*24*3600 + time()) . "T00:00:00+03:00");
+$transaction->setExpiredAt(date("Y-m-d", 3*24*3600 + time()) . "T00:00:00+03:00");
 
 $transaction->customer->setEmail('john@example.com');
 

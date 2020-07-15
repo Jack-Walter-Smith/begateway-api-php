@@ -126,7 +126,7 @@ class GetPaymentToken extends ApiAbstract
                     'currency' => $this->money->getCurrency(),
                     'description' => $this->getDescription(),
                     'tracking_id' => $this->getTrackingId(),
-                    'expired_at' => $this->getExpiredDate(),
+                    'expired_at' => $this->getExpiredAt(),
                     'additional_data' => array(
                         'receipt_text' => $this->additional_data->getReceipt(),
                         'contract' => $this->additional_data->getContract(),
@@ -367,7 +367,7 @@ class GetPaymentToken extends ApiAbstract
     /**
      * @param string $date ISO8601 format
      */
-    public function setExpiredDate($date)
+    public function setExpiredAt($date)
     {
         $iso8601 = NULL;
 
@@ -380,7 +380,7 @@ class GetPaymentToken extends ApiAbstract
     /**
      * @return string|null
      */
-    public function getExpiredDate()
+    public function getExpiredAt()
     {
         return $this->_expired_at;
     }
