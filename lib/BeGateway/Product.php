@@ -110,7 +110,7 @@ class Product extends ApiAbstract
             'fail_url' => $this->getFailUrl(),
             'return_url' => $this->getReturnUrl(),
             'immortal' => $this->getImmortal(),
-            'visible' => $this->getVisibleFields(),
+            'visible' => $this->getVisible(),
             'test' => $this->getTestMode(),
             'transaction_type' => $this->getTransactionType(),
             'additional_data' => array(

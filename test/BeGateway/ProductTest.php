@@ -51,11 +51,11 @@ class ProductTest extends TestCase {
     $auth->setPhoneVisible();
     $auth->setAddressVisible();
 
-    $this->assertEqual(array_diff($auth->getVisibleFields(), array( 'phone', 'address' )), array() );
+    $this->assertEqual(array_diff($auth->getVisible(), array( 'phone', 'address' )), array() );
 
     $auth->unsetAddressVisible();
 
-    $this->assertEqual(array_diff($auth->getVisibleFields(), array( 'phone' )), array() );
+    $this->assertEqual(array_diff($auth->getVisible(), array( 'phone' )), array() );
   }
 
   public function test_transaction_type() {
