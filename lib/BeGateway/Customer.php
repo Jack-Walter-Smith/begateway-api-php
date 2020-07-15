@@ -1,100 +1,243 @@
 <?php
+
 namespace BeGateway;
 
-class Customer {
-  protected $_customer_ip;
-  protected $_customer_email;
+/**
+ * Class Customer
+ *
+ * @package BeGateway
+ */
+class Customer
+{
+    /**
+     * @var string
+     */
+    protected $_ip;
+    /**
+     * @var string
+     */
+    protected $_email;
+    /**
+     * @var string
+     */
+    protected $_first_name;
+    /**
+     * @var string
+     */
+    protected $_last_name;
+    /**
+     * @var string
+     */
+    protected $_address;
+    /**
+     * @var string
+     */
+    protected $_city;
+    /**
+     * @var string
+     */
+    protected $_country;
+    /**
+     * @var string
+     */
+    protected $_state;
+    /**
+     * @var string
+     */
+    protected $_zip;
+    /**
+     * @var string
+     */
+    protected $_phone;
+    /**
+     * @var null|string
+     */
+    protected $_birth_date = NULL;
 
-  protected $_customer_first_name;
-  protected $_customer_last_name;
-  protected $_customer_address;
-  protected $_customer_city;
-  protected $_customer_country;
-  protected $_customer_state;
-  protected $_customer_zip;
-  protected $_customer_phone;
-  protected $_customer_birth_date = NULL;
+    /**
+     * @param string $ip
+     */
+    public function setIp($ip)
+    {
+        $this->_ip = $this->_setNullIfEmpty($ip);
+    }
 
-  public function setIP($ip) {
-    $this->_customer_ip = $this->_setNullIfEmpty($ip);
-  }
-  public function getIP() {
-    return $this->_customer_ip;
-  }
+    /**
+     * @return string
+     */
+    public function getIp()
+    {
+        return $this->_ip;
+    }
 
-  public function setEmail($email) {
-    $this->_customer_email = $this->_setNullIfEmpty($email);
-  }
-  public function getEmail() {
-    return $this->_customer_email;
-  }
+    /**
+     * @param string $email
+     */
+    public function setEmail($email)
+    {
+        $this->_email = $this->_setNullIfEmpty($email);
+    }
 
-  public function setFirstName($first_name) {
-    $this->_customer_first_name = $this->_setNullIfEmpty($first_name);
-  }
-  public function getFirstName() {
-    return $this->_customer_first_name;
-  }
+    /**
+     * @return string
+     */
+    public function getEmail()
+    {
+        return $this->_email;
+    }
 
-  public function setLastName($last_name) {
-    $this->_customer_last_name = $this->_setNullIfEmpty($last_name);
-  }
-  public function getLastName() {
-    return $this->_customer_last_name;
-  }
+    /**
+     * @param string $first_name
+     */
+    public function setFirstName($first_name)
+    {
+        $this->_first_name = $this->_setNullIfEmpty($first_name);
+    }
 
-  public function setAddress($address) {
-    $this->_customer_address = $this->_setNullIfEmpty($address);
-  }
+    /**
+     * @return string
+     */
+    public function getFirstName()
+    {
+        return $this->_first_name;
+    }
 
-  public function getAddress() {
-    return $this->_customer_address;
-  }
+    /**
+     * @param string $last_name
+     */
+    public function setLastName($last_name)
+    {
+        $this->_last_name = $this->_setNullIfEmpty($last_name);
+    }
 
-  public function setCity($city) {
-    $this->_customer_city = $this->_setNullIfEmpty($city);
-  }
-  public function getCity() {
-    return $this->_customer_city;
-  }
+    /**
+     * @return string
+     */
+    public function getLastName()
+    {
+        return $this->_last_name;
+    }
 
-  public function setCountry($country) {
-    $this->_customer_country = $this->_setNullIfEmpty($country);
-  }
-  public function getCountry() {
-    return $this->_customer_country;
-  }
+    /**
+     * @param string $address
+     */
+    public function setAddress($address)
+    {
+        $this->_address = $this->_setNullIfEmpty($address);
+    }
 
-  public function setState($state) {
-    $this->_customer_state = $this->_setNullIfEmpty($state);
-  }
-  public function getState() {
-    return (in_array($this->_customer_country, array( 'US', 'CA'))) ? $this->_customer_state : null;
-  }
+    /**
+     * @return string
+     */
+    public function getAddress()
+    {
+        return $this->_address;
+    }
 
-  public function setZip($zip) {
-    $this->_customer_zip = $this->_setNullIfEmpty($zip);
-  }
-  public function getZip() {
-    return $this->_customer_zip;
-  }
+    /**
+     * @param string $city
+     */
+    public function setCity($city)
+    {
+        $this->_city = $this->_setNullIfEmpty($city);
+    }
 
-  public function setPhone($phone) {
-    $this->_customer_phone = $this->_setNullIfEmpty($phone);
-  }
-  public function getPhone() {
-    return $this->_customer_phone;
-  }
+    /**
+     * @return string
+     */
+    public function getCity()
+    {
+        return $this->_city;
+    }
 
-  public function setBirthDate($birthdate) {
-    $this->_customer_birth_date = $this->_setNullIfEmpty($birthdate);
-  }
-  public function getBirthDate() {
-    return $this->_customer_birth_date;
-  }
+    /**
+     * @param string $country
+     */
+    public function setCountry($country)
+    {
+        $this->_country = $this->_setNullIfEmpty($country);
+    }
 
-  private function _setNullIfEmpty(&$resource) {
-    return (strlen($resource) > 0) ? $resource : null;
-  }
+    /**
+     * @return string
+     */
+    public function getCountry()
+    {
+        return $this->_country;
+    }
+
+    /**
+     * @param string $state
+     */
+    public function setState($state)
+    {
+        $this->_state = $this->_setNullIfEmpty($state);
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getState()
+    {
+        return (in_array($this->_country, array('US', 'CA'))) ? $this->_state : null;
+    }
+
+    /**
+     * @param string $zip
+     */
+    public function setZip($zip)
+    {
+        $this->_zip = $this->_setNullIfEmpty($zip);
+    }
+
+    /**
+     * @return string
+     */
+    public function getZip()
+    {
+        return $this->_zip;
+    }
+
+    /**
+     * @param string $phone
+     */
+    public function setPhone($phone)
+    {
+        $this->_phone = $this->_setNullIfEmpty($phone);
+    }
+
+    /**
+     * @return string
+     */
+    public function getPhone()
+    {
+        return $this->_phone;
+    }
+
+    /**
+     * @param string $birthdate
+     */
+    public function setBirthDate($birthdate)
+    {
+        $this->_birth_date = $this->_setNullIfEmpty($birthdate);
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getBirthDate()
+    {
+        return $this->_birth_date;
+    }
+
+    /**
+     * @param $resource
+     *
+     * @return mixed
+     */
+    private function _setNullIfEmpty(&$resource)
+    {
+        return (strlen($resource) > 0) ? $resource : null;
+    }
 }
-?>
+

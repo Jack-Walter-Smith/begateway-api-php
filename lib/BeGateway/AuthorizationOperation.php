@@ -192,7 +192,7 @@ class AuthorizationOperation extends ApiAbstract
                 'language' => $this->getLanguage(),
                 'test' => $this->getTestMode(),
                 'customer' => array(
-                    'ip' => $this->customer->getIP(),
+                    'ip' => $this->customer->getIp(),
                     'email' => $this->customer->getEmail(),
                     'birth_date' => $this->customer->getBirthDate(),
                 ),

@@ -51,7 +51,7 @@ abstract class ApiAbstract
      */
     protected function _remoteRequest()
     {
-        return GatewayTransport::submit(Settings::$shopId, Settings::$shopKey,
+        return GatewayTransport::submit(
             $this->_endpoint(), $this->_buildRequestMessage(),
             $this->_timeout_read, $this->_timeout_connect);
     }

@@ -1,386 +1,811 @@
 <?php
+
 namespace BeGateway;
 
-class GetPaymentToken extends ApiAbstract {
-  public static $version = '2.1';
+use BeGateway\PaymentMethod\Base;
 
-  public $customer;
-  public $money;
-  public $additional_data;
-  protected $_description;
-  protected $_tracking_id;
-  protected $_success_url;
-  protected $_decline_url;
-  protected $_fail_url;
-  protected $_cancel_url;
-  protected $_notification_url;
-  protected $_transaction_type;
-  protected $_readonly;
-  protected $_visible;
-  protected $_payment_methods;
-  protected $_expired_at;
-  protected $_test_mode;
-  protected $_attempts;
+/**
+ * Class GetPaymentToken
+ *
+ * @package BeGateway
+ */
+class GetPaymentToken extends ApiAbstract
+{
+    /**
+     * @var string
+     */
+    public static $version = '2.1';
+    /**
+     * @var \BeGateway\Customer
+     */
+    public $customer;
+    /**
+     * @var \BeGateway\Money
+     */
+    public $money;
+    /**
+     * @var \BeGateway\AdditionalData
+     */
+    public $additional_data;
+    /**
+     * @var string
+     */
+    protected $_description;
+    /**
+     * @var string
+     */
+    protected $_tracking_id;
+    /**
+     * @var string
+     */
+    protected $_success_url;
+    /**
+     * @var string
+     */
+    protected $_decline_url;
+    /**
+     * @var string
+     */
+    protected $_fail_url;
+    /**
+     * @var string
+     */
+    protected $_cancel_url;
+    /**
+     * @var string
+     */
+    protected $_notification_url;
+    /**
+     * @var string
+     */
+    protected $_transaction_type;
+    /**
+     * @var array
+     */
+    protected $_readonly;
+    /**
+     * @var array
+     */
+    protected $_visible;
+    /**
+     * @var array
+     */
+    protected $_payment_methods;
+    /**
+     * @var null|string
+     */
+    protected $_expired_at;
+    /**
+     * @var bool
+     */
+    protected $_test_mode;
+    /**
+     * @var null|int
+     */
+    protected $_attempts;
 
-  public function __construct() {
-    $this->customer = new Customer();
-    $this->money = new Money();
-    $this->additional_data = new AdditionalData();
-    $this->setPaymentTransactionType();
-    $this->_language = Language::getDefaultLanguage();
-    $this->_expired_at = NULL;
-    $this->_readonly = array();
-    $this->_visible = array();
-    $this->_payment_methods = array();
-    $this->_test_mode = false;
-    $this->_attempts = NULL;
-  }
-
-  protected function _endpoint() {
-    return Settings::$checkoutBase . '/ctp/api/checkouts';
-  }
-
-  protected function _buildRequestMessage() {
-    $request = array(
-      'checkout' => array(
-        'version' => self::$version,
-        'transaction_type' => $this->getTransactionType(),
-        'attempts' => $this->getAttempts(),
-        'test' => $this->getTestMode(),
-        'order' => array(
-          'amount' => $this->money->getCents(),
-          'currency' => $this->money->getCurrency(),
-          'description' => $this->getDescription(),
-          'tracking_id' => $this->getTrackingId(),
-          'expired_at' => $this->getExpiryDate(),
-          'additional_data' => array(
-            'receipt_text' => $this->additional_data->getReceipt(),
-            'contract' => $this->additional_data->getContract(),
-            'meta' => $this->additional_data->getMeta()
-          )
-        ),
-        'settings' => array(
-          'notification_url' => $this->getNotificationUrl(),
-          'success_url' => $this->getSuccessUrl(),
-          'decline_url' => $this->getDeclineUrl(),
-          'fail_url' => $this->getFailUrl(),
-          'cancel_url' => $this->getCancelUrl(),
-          'language' => $this->getLanguage(),
-          'customer_fields' => array(
-            'read_only' => $this->getReadonlyFields(),
-            'visible' => $this->getVisibleFields()
-          )
-        ),
-        'customer' => array(
-          'email' => $this->customer->getEmail(),
-          'first_name' => $this->customer->getFirstName(),
-          'last_name' => $this->customer->getLastName(),
-          'country' => $this->customer->getCountry(),
-          'city' => $this->customer->getCity(),
-          'state' => $this->customer->getState(),
-          'zip' => $this->customer->getZip(),
-          'address' => $this->customer->getAddress(),
-          'phone' => $this->customer->getPhone(),
-          'birth_date' => $this->customer->getBirthDate()
-        )
-      )
-    );
-
-    if (is_null($this->getAttempts())) {
-      unset($request['checkout']['attempts']);
+    /**
+     * GetPaymentToken constructor.
+     */
+    public function __construct()
+    {
+        $this->customer = new Customer();
+        $this->money = new Money();
+        $this->additional_data = new AdditionalData();
+        $this->setPaymentTransactionType();
+        $this->_language = Language::getDefaultLanguage();
+        $this->_expired_at = NULL;
+        $this->_readonly = array();
+        $this->_visible = array();
+        $this->_payment_methods = array();
+        $this->_test_mode = false;
+        $this->_attempts = NULL;
     }
 
-    $payment_methods = $this->_getPaymentMethods();
-    if ($payment_methods != NULL)
-      $request['checkout']['payment_method'] = $payment_methods;
-
-    Logger::getInstance()->write($request, Logger::DEBUG, get_class() . '::' . __FUNCTION__);
-
-    return $request;
-  }
-
-  public function submit() {
-    return new ResponseCheckout($this->_remoteRequest());
-  }
-
-  public function setDescription($description) {
-    $this->_description = $description;
-  }
-  public function getDescription() {
-    return $this->_description;
-  }
-
-  public function setTrackingId($tracking_id) {
-    $this->_tracking_id = $tracking_id;
-  }
-  public function getTrackingId() {
-    return $this->_tracking_id;
-  }
-
-  public function setNotificationUrl($notification_url) {
-    $this->_notification_url = $notification_url;
-  }
-  public function getNotificationUrl() {
-    return $this->_notification_url;
-  }
-
-  public function setSuccessUrl($success_url) {
-    $this->_success_url = $success_url;
-  }
-  public function getSuccessUrl() {
-    return $this->_success_url;
-  }
-
-  public function setDeclineUrl($decline_url) {
-    $this->_decline_url = $decline_url;
-  }
-  public function getDeclineUrl() {
-    return $this->_decline_url;
-  }
-
-  public function setFailUrl($fail_url) {
-    $this->_fail_url = $fail_url;
-  }
-  public function getFailUrl() {
-    return $this->_fail_url;
-  }
-  public function setCancelUrl($cancel_url) {
-    $this->_cancel_url = $cancel_url;
-  }
-  public function getCancelUrl() {
-    return $this->_cancel_url;
-  }
-
-  public function setAuthorizationTransactionType() {
-    $this->_transaction_type = 'authorization';
-  }
-
-  public function setPaymentTransactionType() {
-    $this->_transaction_type = 'payment';
-  }
-
-  public function setTokenizationTransactionType() {
-    $this->_transaction_type = 'tokenization';
-  }
-
-  public function getTransactionType() {
-    return $this->_transaction_type;
-  }
-
-  public function setLanguage($language_code) {
-    if (in_array($language_code, Language::getSupportedLanguages())) {
-      $this->_language = $language_code;
-    }else{
-      $this->_language = Language::getDefaultLanguage();
-    }
-  }
-
-  public function getLanguage() {
-    return $this->_language;
-  }
-
-  # date when payment expires for payment
-  # date is in ISO8601 format
-  public function setExpiryDate($date) {
-    $iso8601 = NULL;
-
-    if ($date != NULL)
-      $iso8601 = date(DATE_ISO8601, strtotime($date));
-
-    $this->_expired_at = $iso8601;
-  }
-
-  public function getExpiryDate() {
-    return $this->_expired_at;
-  }
-
-  public function getReadonlyFields() {
-    return $this->_readonly;
-  }
-  public function getVisibleFields() {
-    return $this->_visible;
-  }
-
-  public function setFirstNameReadonly(){
-    $this->_readonly = self::_searchAndAdd($this->_readonly, 'first_name');
-  }
-  public function unsetFirstNameReadonly(){
-    $this->_readonly = array_diff($this->_readonly, array('first_name'));
-  }
-  public function setLastNameReadonly(){
-    $this->_readonly = self::_searchAndAdd($this->_readonly, 'last_name');
-  }
-  public function unsetLastNameReadonly(){
-    $this->_readonly = array_diff($this->_readonly, array('last_name'));
-  }
-  public function setEmailReadonly(){
-    $this->_readonly = self::_searchAndAdd($this->_readonly, 'email');
-  }
-  public function unsetEmailReadonly(){
-    $this->_readonly = array_diff($this->_readonly, array('email'));
-  }
-  public function setAddressReadonly(){
-    $this->_readonly = self::_searchAndAdd($this->_readonly, 'address');
-  }
-  public function unsetAddressReadonly(){
-    $this->_readonly = array_diff($this->_readonly, array('address'));
-  }
-  public function setCityReadonly(){
-    $this->_readonly = self::_searchAndAdd($this->_readonly, 'city');
-  }
-  public function unsetCityReadonly(){
-    $this->_readonly = array_diff($this->_readonly, array('city'));
-  }
-  public function setStateReadonly(){
-    $this->_readonly = self::_searchAndAdd($this->_readonly, 'state');
-  }
-  public function unsetStateReadonly(){
-    $this->_readonly = array_diff($this->_readonly, array('state'));
-  }
-  public function setZipReadonly(){
-    $this->_readonly = self::_searchAndAdd($this->_readonly, 'zip');
-  }
-  public function unsetZipReadonly(){
-    $this->_readonly = array_diff($this->_readonly, array('zip'));
-  }
-  public function setPhoneReadonly(){
-    $this->_readonly = self::_searchAndAdd($this->_readonly, 'phone');
-  }
-  public function unsetPhoneReadonly(){
-    $this->_readonly = array_diff($this->_readonly, array('phone'));
-  }
-  public function setCountryReadonly(){
-    $this->_readonly = self::_searchAndAdd($this->_readonly, 'country');
-  }
-  public function unsetCountryReadonly(){
-    $this->_readonly = array_diff($this->_readonly, array('country'));
-  }
-
-  public function setPhoneVisible() {
-    $this->_visible = self::_searchAndAdd($this->_visible, 'phone');
-  }
-
-  public function unsetPhoneVisible() {
-    $this->_visible = array_diff($this->_visible, array('phone'));
-  }
-
-  public function setAddressVisible() {
-    $this->_visible = self::_searchAndAdd($this->_visible, 'address');
-  }
-
-  public function unsetAddressVisible() {
-    $this->_visible = array_diff($this->_visible, array('address'));
-  }
-
-  public function setFirstNameVisible() {
-    $this->_visible = self::_searchAndAdd($this->_visible, 'first_name');
-  }
-
-  public function unsetFirstNameVisible() {
-    $this->_visible = array_diff($this->_visible, array('first_name'));
-  }
-
-  public function setLastNameVisible() {
-    $this->_visible = self::_searchAndAdd($this->_visible, 'last_name');
-  }
-
-  public function unsetLastNameVisible() {
-    $this->_visible = array_diff($this->_visible, array('last_name'));
-  }
-
-  public function setCityVisible() {
-    $this->_visible = self::_searchAndAdd($this->_visible, 'city');
-  }
-
-  public function unsetCityVisible() {
-    $this->_visible = array_diff($this->_visible, array('city'));
-  }
-
-  public function setStateVisible() {
-    $this->_visible = self::_searchAndAdd($this->_visible, 'state');
-  }
-
-  public function unsetStateVisible() {
-    $this->_visible = array_diff($this->_visible, array('state'));
-  }
-
-  public function setZipVisible() {
-    $this->_visible = self::_searchAndAdd($this->_visible, 'zip');
-  }
-
-  public function unsetZipVisible() {
-    $this->_visible = array_diff($this->_visible, array('zip'));
-  }
-
-  public function setCountryVisible() {
-    $this->_visible = self::_searchAndAdd($this->_visible, 'country');
-  }
-
-  public function unsetCountryVisible() {
-    $this->_visible = array_diff($this->_visible, array('country'));
-  }
-
-  public function setEmailVisible() {
-    $this->_visible = self::_searchAndAdd($this->_visible, 'email');
-  }
-
-  public function unsetEmailVisible() {
-    $this->_visible = array_diff($this->_visible, array('email'));
-  }
-
-  public function setBirthDateVisible() {
-    $this->_visible = self::_searchAndAdd($this->_visible, 'birth_date');
-  }
-
-  public function unsetBirthDateVisible() {
-    $this->_visible = array_diff($this->_visible, array('birth_date'));
-  }
-
-  public function addPaymentMethod($method) {
-    $this->_payment_methods[] = $method;
-  }
-
-  public function setTestMode($mode = true) {
-    $this->_test_mode = $mode;
-  }
-
-  public function getTestMode() {
-    return $this->_test_mode;
-  }
-
-  public function setAttempts($attempts) {
-    $this->_attempts = $attempts;
-  }
-
-  public function getAttempts() {
-    return $this->_attempts;
-  }
-
-  private function _searchAndAdd($array, $value) {
-    // search for $value in $array
-    // if not found, adds $value to $array and returns $array
-    // otherwise returns not altered $array
-    $arr = $array;
-    if (!in_array($value, $arr)) {
-      array_push($arr, $value);
-    }
-    return $arr;
-  }
-
-  private function _getPaymentMethods() {
-    $arResult = array();
-
-    if (!empty($this->_payment_methods)) {
-      $arResult['types'] = array();
-      foreach ($this->_payment_methods as $pm) {
-        $arResult['types'][] = $pm->getName();
-        $arResult[$pm->getName()] = $pm->getParamsArray();
-      }
-    } else {
-      $arResult = NULL;
+    /**
+     * @return string
+     */
+    protected function _endpoint()
+    {
+        return Settings::$checkoutBase . '/ctp/api/checkouts';
     }
 
-    return $arResult;
-  }
+    /**
+     * @return array[]|mixed
+     */
+    protected function _buildRequestMessage()
+    {
+        $request = array(
+            'checkout' => array(
+                'version' => self::$version,
+                'transaction_type' => $this->getTransactionType(),
+                'attempts' => $this->getAttempts(),
+                'test' => $this->getTestMode(),
+                'order' => array(
+                    'amount' => $this->money->getCents(),
+                    'currency' => $this->money->getCurrency(),
+                    'description' => $this->getDescription(),
+                    'tracking_id' => $this->getTrackingId(),
+                    'expired_at' => $this->getExpiredDate(),
+                    'additional_data' => array(
+                        'receipt_text' => $this->additional_data->getReceipt(),
+                        'contract' => $this->additional_data->getContract(),
+                        'meta' => $this->additional_data->getMeta(),
+                    ),
+                ),
+                'settings' => array(
+                    'notification_url' => $this->getNotificationUrl(),
+                    'success_url' => $this->getSuccessUrl(),
+                    'decline_url' => $this->getDeclineUrl(),
+                    'fail_url' => $this->getFailUrl(),
+                    'cancel_url' => $this->getCancelUrl(),
+                    'language' => $this->getLanguage(),
+                    'customer_fields' => array(
+                        'read_only' => $this->getReadonly(),
+                        'visible' => $this->getVisible(),
+                    ),
+                ),
+                'customer' => array(
+                    'email' => $this->customer->getEmail(),
+                    'first_name' => $this->customer->getFirstName(),
+                    'last_name' => $this->customer->getLastName(),
+                    'country' => $this->customer->getCountry(),
+                    'city' => $this->customer->getCity(),
+                    'state' => $this->customer->getState(),
+                    'zip' => $this->customer->getZip(),
+                    'address' => $this->customer->getAddress(),
+                    'phone' => $this->customer->getPhone(),
+                    'birth_date' => $this->customer->getBirthDate(),
+                ),
+            ),
+        );
+
+        if (is_null($this->getAttempts())) {
+            unset($request['checkout']['attempts']);
+        }
+
+        $payment_methods = $this->_getPaymentMethods();
+        if ($payment_methods != NULL)
+            $request['checkout']['payment_method'] = $payment_methods;
+
+        Logger::getInstance()->write($request, Logger::DEBUG, get_class() . '::' . __FUNCTION__);
+
+        return $request;
+    }
+
+    /**
+     * @return \BeGateway\Response|\BeGateway\ResponseCheckout
+     * @throws \Exception
+     */
+    public function submit()
+    {
+        return new ResponseCheckout($this->_remoteRequest());
+    }
+
+    /**
+     * @param string $description
+     */
+    public function setDescription($description)
+    {
+        $this->_description = $description;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->_description;
+    }
+
+    /**
+     * @param string $tracking_id
+     */
+    public function setTrackingId($tracking_id)
+    {
+        $this->_tracking_id = $tracking_id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTrackingId()
+    {
+        return $this->_tracking_id;
+    }
+
+    /**
+     * @param string $notification_url
+     */
+    public function setNotificationUrl($notification_url)
+    {
+        $this->_notification_url = $notification_url;
+    }
+
+    /**
+     * @return string
+     */
+    public function getNotificationUrl()
+    {
+        return $this->_notification_url;
+    }
+
+    /**
+     * @param string $success_url
+     */
+    public function setSuccessUrl($success_url)
+    {
+        $this->_success_url = $success_url;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSuccessUrl()
+    {
+        return $this->_success_url;
+    }
+
+    /**
+     * @param string $decline_url
+     */
+    public function setDeclineUrl($decline_url)
+    {
+        $this->_decline_url = $decline_url;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDeclineUrl()
+    {
+        return $this->_decline_url;
+    }
+
+    /**
+     * @param string $fail_url
+     */
+    public function setFailUrl($fail_url)
+    {
+        $this->_fail_url = $fail_url;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFailUrl()
+    {
+        return $this->_fail_url;
+    }
+
+    /**
+     * @param string $cancel_url
+     */
+    public function setCancelUrl($cancel_url)
+    {
+        $this->_cancel_url = $cancel_url;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCancelUrl()
+    {
+        return $this->_cancel_url;
+    }
+
+    /**
+     * @param string $transactionType
+     */
+    public function setTransactionType($transactionType)
+    {
+        $this->_transaction_type = $transactionType;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTransactionType()
+    {
+        return $this->_transaction_type;
+    }
+
+    /**
+     * @return void
+     */
+    public function setAuthorizationTransactionType()
+    {
+        $this->_transaction_type = 'authorization';
+    }
+
+    /**
+     * @return void
+     */
+    public function setPaymentTransactionType()
+    {
+        $this->_transaction_type = 'payment';
+    }
+
+    /**
+     * @return void
+     */
+    public function setTokenizationTransactionType()
+    {
+        $this->_transaction_type = 'tokenization';
+    }
+
+    /**
+     * @param string $language_code
+     */
+    public function setLanguage($language_code)
+    {
+        if (in_array($language_code, Language::getSupportedLanguages())) {
+            $this->_language = $language_code;
+        } else {
+            $this->_language = Language::getDefaultLanguage();
+        }
+    }
+
+    /**
+     * @return mixed|string
+     */
+    public function getLanguage()
+    {
+        return $this->_language;
+    }
+
+    # date when payment expires for payment
+    # date is in ISO8601 format
+    /**
+     * @param string $date ISO8601 format
+     */
+    public function setExpiredDate($date)
+    {
+        $iso8601 = NULL;
+
+        if ($date != NULL)
+            $iso8601 = date(DATE_ISO8601, strtotime($date));
+
+        $this->_expired_at = $iso8601;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getExpiredDate()
+    {
+        return $this->_expired_at;
+    }
+
+    /**
+     * @param array $fields
+     *
+     * @return array
+     */
+    public function setReadonly($fields)
+    {
+        return array_merge_recursive($this->_readonly, $fields);
+    }
+
+    /**
+     * @return array
+     */
+    public function getReadonly()
+    {
+        return $this->_readonly;
+    }
+
+    /**
+     * @param array $fields
+     *
+     * @return array
+     */
+    public function setVisible($fields)
+    {
+        return array_merge_recursive($this->_visible, $fields);
+    }
+
+    /**
+     * @return array
+     */
+    public function getVisible()
+    {
+        return $this->_visible;
+    }
+
+    /**
+     * @return void
+     */
+    public function setFirstNameReadonly()
+    {
+        $this->_readonly = self::_searchAndAdd($this->_readonly, 'first_name');
+    }
+
+    /**
+     * @return void
+     */
+    public function unsetFirstNameReadonly()
+    {
+        $this->_readonly = array_diff($this->_readonly, array('first_name'));
+    }
+
+    /**
+     * @return void
+     */
+    public function setLastNameReadonly()
+    {
+        $this->_readonly = self::_searchAndAdd($this->_readonly, 'last_name');
+    }
+
+    /**
+     * @return void
+     */
+    public function unsetLastNameReadonly()
+    {
+        $this->_readonly = array_diff($this->_readonly, array('last_name'));
+    }
+
+    /**
+     * @return void
+     */
+    public function setEmailReadonly()
+    {
+        $this->_readonly = self::_searchAndAdd($this->_readonly, 'email');
+    }
+
+    /**
+     * @return void
+     */
+    public function unsetEmailReadonly()
+    {
+        $this->_readonly = array_diff($this->_readonly, array('email'));
+    }
+
+    /**
+     * @return void
+     */
+    public function setAddressReadonly()
+    {
+        $this->_readonly = self::_searchAndAdd($this->_readonly, 'address');
+    }
+
+    /**
+     * @return void
+     */
+    public function unsetAddressReadonly()
+    {
+        $this->_readonly = array_diff($this->_readonly, array('address'));
+    }
+
+    /**
+     * @return void
+     */
+    public function setCityReadonly()
+    {
+        $this->_readonly = self::_searchAndAdd($this->_readonly, 'city');
+    }
+
+    /**
+     * @return void
+     */
+    public function unsetCityReadonly()
+    {
+        $this->_readonly = array_diff($this->_readonly, array('city'));
+    }
+
+    /**
+     * @return void
+     */
+    public function setStateReadonly()
+    {
+        $this->_readonly = self::_searchAndAdd($this->_readonly, 'state');
+    }
+
+    /**
+     * @return void
+     */
+    public function unsetStateReadonly()
+    {
+        $this->_readonly = array_diff($this->_readonly, array('state'));
+    }
+
+    /**
+     * @return void
+     */
+    public function setZipReadonly()
+    {
+        $this->_readonly = self::_searchAndAdd($this->_readonly, 'zip');
+    }
+
+    /**
+     * @return void
+     */
+    public function unsetZipReadonly()
+    {
+        $this->_readonly = array_diff($this->_readonly, array('zip'));
+    }
+
+    /**
+     * @return void
+     */
+    public function setPhoneReadonly()
+    {
+        $this->_readonly = self::_searchAndAdd($this->_readonly, 'phone');
+    }
+
+    /**
+     * @return void
+     */
+    public function unsetPhoneReadonly()
+    {
+        $this->_readonly = array_diff($this->_readonly, array('phone'));
+    }
+
+    /**
+     * @return void
+     */
+    public function setCountryReadonly()
+    {
+        $this->_readonly = self::_searchAndAdd($this->_readonly, 'country');
+    }
+
+    /**
+     * @return void
+     */
+    public function unsetCountryReadonly()
+    {
+        $this->_readonly = array_diff($this->_readonly, array('country'));
+    }
+
+    /**
+     * @return void
+     */
+    public function setPhoneVisible()
+    {
+        $this->_visible = self::_searchAndAdd($this->_visible, 'phone');
+    }
+
+    /**
+     * @return void
+     */
+    public function unsetPhoneVisible()
+    {
+        $this->_visible = array_diff($this->_visible, array('phone'));
+    }
+
+    /**
+     * @return void
+     */
+    public function setAddressVisible()
+    {
+        $this->_visible = self::_searchAndAdd($this->_visible, 'address');
+    }
+
+    /**
+     * @return void
+     */
+    public function unsetAddressVisible()
+    {
+        $this->_visible = array_diff($this->_visible, array('address'));
+    }
+
+    /**
+     * @return void
+     */
+    public function setFirstNameVisible()
+    {
+        $this->_visible = self::_searchAndAdd($this->_visible, 'first_name');
+    }
+
+    /**
+     * @return void
+     */
+    public function unsetFirstNameVisible()
+    {
+        $this->_visible = array_diff($this->_visible, array('first_name'));
+    }
+
+    /**
+     * @return void
+     */
+    public function setLastNameVisible()
+    {
+        $this->_visible = self::_searchAndAdd($this->_visible, 'last_name');
+    }
+
+    /**
+     * @return void
+     */
+    public function unsetLastNameVisible()
+    {
+        $this->_visible = array_diff($this->_visible, array('last_name'));
+    }
+
+    /**
+     * @return void
+     */
+    public function setCityVisible()
+    {
+        $this->_visible = self::_searchAndAdd($this->_visible, 'city');
+    }
+
+    /**
+     * @return void
+     */
+    public function unsetCityVisible()
+    {
+        $this->_visible = array_diff($this->_visible, array('city'));
+    }
+
+    /**
+     * @return void
+     */
+    public function setStateVisible()
+    {
+        $this->_visible = self::_searchAndAdd($this->_visible, 'state');
+    }
+
+    /**
+     * @return void
+     */
+    public function unsetStateVisible()
+    {
+        $this->_visible = array_diff($this->_visible, array('state'));
+    }
+
+    /**
+     * @return void
+     */
+    public function setZipVisible()
+    {
+        $this->_visible = self::_searchAndAdd($this->_visible, 'zip');
+    }
+
+    /**
+     * @return void
+     */
+    public function unsetZipVisible()
+    {
+        $this->_visible = array_diff($this->_visible, array('zip'));
+    }
+
+    /**
+     * @return void
+     */
+    public function setCountryVisible()
+    {
+        $this->_visible = self::_searchAndAdd($this->_visible, 'country');
+    }
+
+    /**
+     * @return void
+     */
+    public function unsetCountryVisible()
+    {
+        $this->_visible = array_diff($this->_visible, array('country'));
+    }
+
+    /**
+     * @return void
+     */
+    public function setEmailVisible()
+    {
+        $this->_visible = self::_searchAndAdd($this->_visible, 'email');
+    }
+
+    /**
+     * @return void
+     */
+    public function unsetEmailVisible()
+    {
+        $this->_visible = array_diff($this->_visible, array('email'));
+    }
+
+    /**
+     * @return void
+     */
+    public function setBirthDateVisible()
+    {
+        $this->_visible = self::_searchAndAdd($this->_visible, 'birth_date');
+    }
+
+    /**
+     * @return void
+     */
+    public function unsetBirthDateVisible()
+    {
+        $this->_visible = array_diff($this->_visible, array('birth_date'));
+    }
+
+    /**
+     * @param array<Base> $methods
+     */
+    public function setPaymentMethod($methods)
+    {
+        foreach ($methods as $method) {
+            if ($method instanceof Base) {
+                $this->addPaymentMethod($method);
+            }
+        }
+    }
+
+    /**
+     * @param PaymentMethod\Base $method
+     */
+    public function addPaymentMethod($method)
+    {
+        $this->_payment_methods[] = $method;
+    }
+
+    /**
+     * @param bool $mode
+     */
+    public function setTestMode($mode = true)
+    {
+        $this->_test_mode = $mode;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getTestMode()
+    {
+        return $this->_test_mode;
+    }
+
+    /**
+     * @param int $attempts
+     */
+    public function setAttempts($attempts)
+    {
+        $this->_attempts = $attempts;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getAttempts()
+    {
+        return $this->_attempts;
+    }
+
+    /**
+     * @param $array
+     * @param $value
+     *
+     * @return mixed
+     */
+    private function _searchAndAdd($array, $value)
+    {
+        // search for $value in $array
+        // if not found, adds $value to $array and returns $array
+        // otherwise returns not altered $array
+        $arr = $array;
+        if (!in_array($value, $arr)) {
+            array_push($arr, $value);
+        }
+
+        return $arr;
+    }
+
+    /**
+     * @return array|null
+     */
+    private function _getPaymentMethods()
+    {
+        $arResult = array();
+
+        if (!empty($this->_payment_methods)) {
+            $arResult['types'] = array();
+            foreach ($this->_payment_methods as $pm) {
+                $arResult['types'][] = $pm->getName();
+                $arResult[$pm->getName()] = $pm->getParamsArray();
+            }
+        } else {
+            $arResult = NULL;
+        }
+
+        return $arResult;
+    }
 }
-?>
+

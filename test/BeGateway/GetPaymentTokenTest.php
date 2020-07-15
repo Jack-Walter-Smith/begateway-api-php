@@ -21,12 +21,12 @@ class GetPaymentTokenTest extends TestCase {
     $auth = $this->getTestObjectInstance();
     $date = '2020-12-30 23:21:46';
     $date_iso8601 = date(DATE_ISO8601, strtotime($date));
-    $auth->setExpiryDate($date);
-    $this->assertEqual($auth->getExpiryDate(), $date_iso8601);
+    $auth->setExpiredDate($date);
+    $this->assertEqual($auth->getExpiredDate(), $date_iso8601);
 
     $date = NULL;
-    $auth->setExpiryDate($date);
-    $this->assertEqual($auth->getExpiryDate(), NULL);
+    $auth->setExpiredDate($date);
+    $this->assertEqual($auth->getExpiredDate(), NULL);
   }
 
   public function test_setUrls() {
@@ -57,11 +57,11 @@ class GetPaymentTokenTest extends TestCase {
     $auth->setEmailReadonly();
     $auth->setCityReadonly();
 
-    $this->assertEqual(array_diff($auth->getReadOnlyFields(), array( 'first_name', 'last_name', 'email', 'city' )), array() );
+    $this->assertEqual(array_diff($auth->getReadonly(), array( 'first_name', 'last_name', 'email', 'city' )), array() );
 
     $auth->unsetFirstNameReadonly();
 
-    $this->assertEqual(array_diff($auth->getReadOnlyFields(), array( 'last_name', 'email', 'city' )), array() );
+    $this->assertEqual(array_diff($auth->getReadonly(), array( 'last_name', 'email', 'city' )), array() );
 
   }
 
@@ -70,11 +70,11 @@ class GetPaymentTokenTest extends TestCase {
     $auth->setPhoneVisible();
     $auth->setAddressVisible();
 
-    $this->assertEqual(array_diff($auth->getVisibleFields(), array( 'phone', 'address' )), array() );
+    $this->assertEqual(array_diff($auth->getVisible(), array( 'phone', 'address' )), array() );
 
     $auth->unsetAddressVisible();
 
-    $this->assertEqual(array_diff($auth->getVisibleFields(), array( 'phone' )), array() );
+    $this->assertEqual(array_diff($auth->getVisible(), array( 'phone' )), array() );
   }
 
   public function test_transaction_type() {
@@ -394,7 +394,7 @@ class GetPaymentTokenTest extends TestCase {
     $transaction->setDeclineUrl($url . '/d' );
     $transaction->setFailUrl($url . '/f' );
     $transaction->setLanguage('zh');
-    $transaction->setExpiryDate('2030-12-31T00:21:46+0300');
+    $transaction->setExpiredDate('2030-12-31T00:21:46+0300');
     $transaction->setTestMode(true);
 
     $transaction->customer->setFirstName('John');
