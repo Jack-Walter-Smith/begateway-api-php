@@ -18,11 +18,11 @@ class Card
      */
     protected $_card_holder;
     /**
-     * @var string
+     * @var int
      */
     protected $_card_exp_month;
     /**
-     * @var string
+     * @var int
      */
     protected $_card_exp_year;
     /**
@@ -103,7 +103,7 @@ class Card
     }
 
     /**
-     * @param string $exp_month
+     * @param int $exp_month
      */
     public function setCardExpMonth($exp_month)
     {
@@ -115,7 +115,7 @@ class Card
     }
 
     /**
-     * @return string
+     * @return int
      */
     public function getCardExpMonth()
     {
@@ -123,7 +123,7 @@ class Card
     }
 
     /**
-     * @param string $exp_year
+     * @param int $exp_year
      */
     public function setCardExpYear($exp_year)
     {
