@@ -23,19 +23,19 @@ class QueryByUid extends ApiAbstract
     }
 
     /**
-     * @param string $uid
-     */
-    public function setUid($uid)
-    {
-        $this->_uid = $uid;
-    }
-
-    /**
      * @return string
      */
     public function getUid()
     {
         return $this->_uid;
+    }
+
+    /**
+     * @param string $uid
+     */
+    public function setUid($uid)
+    {
+        $this->_uid = $uid;
     }
 
     /**

@@ -1,26 +1,30 @@
 <?php
 /**
- *	Extension for a TestDox reporter
- *	@package	SimpleTest
- *	@subpackage	Extensions
- *	@version	$Id: testdox.php 2004 2010-10-31 13:44:14Z jsweat $
+ *    Extension for a TestDox reporter
+ *
+ * @package       SimpleTest
+ * @subpackage    Extensions
+ * @version       $Id: testdox.php 2004 2010-10-31 13:44:14Z jsweat $
  */
 
 /**
- * 	TestDox reporter 
- *	@package	SimpleTest
- *	@subpackage	Extensions
+ *    TestDox reporter
+ *
+ * @package       SimpleTest
+ * @subpackage    Extensions
  */
 class TestDoxReporter extends SimpleReporter
 {
     var $_test_case_pattern = '/^TestOf(.*)$/';
 
-    function __construct($test_case_pattern = '/^TestOf(.*)$/') {
+    function __construct($test_case_pattern = '/^TestOf(.*)$/')
+    {
         parent::__construct();
         $this->_test_case_pattern = empty($test_case_pattern) ? '/^(.*)$/' : $test_case_pattern;
     }
 
-    function paintCaseStart($test_name) {
+    function paintCaseStart($test_name)
+    {
         preg_match($this->_test_case_pattern, $test_name, $matches);
         if (!empty($matches[1])) {
             echo $matches[1] . "\n";
@@ -29,11 +33,13 @@ class TestDoxReporter extends SimpleReporter
         }
     }
 
-    function paintCaseEnd($test_name) {
+    function paintCaseEnd($test_name)
+    {
         echo "\n";
     }
 
-    function paintMethodStart($test_name) {
+    function paintMethodStart($test_name)
+    {
         if (!preg_match('/^test(.*)$/i', $test_name, $matches)) {
             return;
         }
@@ -42,12 +48,15 @@ class TestDoxReporter extends SimpleReporter
         echo '- ' . strtolower(preg_replace('/([a-zA-Z])([A-Z0-9])/', '$1 $2', $test_name));
     }
 
-    function paintMethodEnd($test_name) {
+    function paintMethodEnd($test_name)
+    {
         echo "\n";
     }
 
-    function paintFail($message) {
+    function paintFail($message)
+    {
         echo " [FAILED]";
     }
 }
+
 ?>

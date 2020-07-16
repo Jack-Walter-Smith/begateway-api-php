@@ -1,9 +1,10 @@
 <?php
 /**
  *  base include file for SimpleTest
- *  @package    SimpleTest
- *  @subpackage UnitTester
- *  @version    $Id: unit_tester.php 1882 2009-07-01 14:30:05Z lastcraft $
+ *
+ * @package    SimpleTest
+ * @subpackage UnitTester
+ * @version    $Id: unit_tester.php 1882 2009-07-01 14:30:05Z lastcraft $
  */
 
 /**#@+
@@ -17,79 +18,80 @@ require_once(dirname(__FILE__) . '/dumper.php');
  *    Standard unit test class for day to day testing
  *    of PHP code XP style. Adds some useful standard
  *    assertions.
- *    @package  SimpleTest
- *    @subpackage   UnitTester
+ *
+ * @package      SimpleTest
+ * @subpackage   UnitTester
  */
-class UnitTestCase extends SimpleTestCase {
-
+class UnitTestCase extends SimpleTestCase
+{
     /**
      *    Creates an empty test case. Should be subclassed
      *    with test methods for a functional test case.
-     *    @param string $label     Name of test case. Will use
+     *
+     * @param string $label        Name of test case. Will use
      *                             the class name if none specified.
-     *    @access public
+     *
+     * @access public
      */
-    function __construct($label = false) {
-        if (! $label) {
+    function __construct($label = false)
+    {
+        if (!$label) {
             $label = get_class($this);
         }
         parent::__construct($label);
     }
 
     /**
+     *    Will be true if the value is null.
+     *
+     * @param null   $value   Supposedly null value.
+     * @param string $message Message to display.
+     *
+     * @return boolean                        True on pass
+     * @access public
+     */
+    function assertNull($value, $message = '%s')
+    {
+        $dumper = new SimpleDumper();
+        $message = sprintf(
+            $message,
+            '[' . $dumper->describeValue($value) . '] should be null');
+
+        return $this->assertTrue(!isset($value), $message);
+    }
+
+    /**
      *    Called from within the test methods to register
      *    passes and failures.
-     *    @param boolean $result    Pass on true.
-     *    @param string $message    Message to display describing
+     *
+     * @param boolean $result       Pass on true.
+     * @param string  $message      Message to display describing
      *                              the test state.
-     *    @return boolean           True on pass
-     *    @access public
+     *
+     * @return boolean           True on pass
+     * @access public
      */
-    function assertTrue($result, $message = '%s') {
+    function assertTrue($result, $message = '%s')
+    {
         return $this->assert(new TrueExpectation(), $result, $message);
     }
 
     /**
-     *    Will be true on false and vice versa. False
-     *    is the PHP definition of false, so that null,
-     *    empty strings, zero and an empty array all count
-     *    as false.
-     *    @param boolean $result    Pass on false.
-     *    @param string $message    Message to display.
-     *    @return boolean           True on pass
-     *    @access public
-     */
-    function assertFalse($result, $message = '%s') {
-        return $this->assert(new FalseExpectation(), $result, $message);
-    }
-
-    /**
-     *    Will be true if the value is null.
-     *    @param null $value       Supposedly null value.
-     *    @param string $message   Message to display.
-     *    @return boolean                        True on pass
-     *    @access public
-     */
-    function assertNull($value, $message = '%s') {
-        $dumper = new SimpleDumper();
-        $message = sprintf(
-                $message,
-                '[' . $dumper->describeValue($value) . '] should be null');
-        return $this->assertTrue(! isset($value), $message);
-    }
-
-    /**
      *    Will be true if the value is set.
-     *    @param mixed $value           Supposedly set value.
-     *    @param string $message        Message to display.
-     *    @return boolean               True on pass.
-     *    @access public
+     *
+     * @param mixed  $value   Supposedly set value.
+     * @param string $message Message to display.
+     *
+     * @return boolean               True on pass.
+     * @access public
      */
-    function assertNotNull($value, $message = '%s') {
+    function assertNotNull($value, $message = '%s')
+    {
         $dumper = new SimpleDumper();
         $message = sprintf(
-                $message,
-                '[' . $dumper->describeValue($value) . '] should not be null');
+            $message,
+            '[' . $dumper->describeValue($value) . '] should not be null');
+
         return $this->assertTrue(isset($value), $message);
     }
 
@@ -97,132 +99,156 @@ class UnitTestCase extends SimpleTestCase {
      *    Type and class test. Will pass if class
      *    matches the type name or is a subclass or
      *    if not an object, but the type is correct.
-     *    @param mixed $object         Object to test.
-     *    @param string $type          Type name as string.
-     *    @param string $message       Message to display.
-     *    @return boolean              True on pass.
-     *    @access public
+     *
+     * @param mixed  $object  Object to test.
+     * @param string $type    Type name as string.
+     * @param string $message Message to display.
+     *
+     * @return boolean              True on pass.
+     * @access public
      */
-    function assertIsA($object, $type, $message = '%s') {
+    function assertIsA($object, $type, $message = '%s')
+    {
         return $this->assert(
-                new IsAExpectation($type),
-                $object,
-                $message);
+            new IsAExpectation($type),
+            $object,
+            $message);
     }
 
     /**
      *    Type and class mismatch test. Will pass if class
      *    name or underling type does not match the one
      *    specified.
-     *    @param mixed $object         Object to test.
-     *    @param string $type          Type name as string.
-     *    @param string $message       Message to display.
-     *    @return boolean              True on pass.
-     *    @access public
+     *
+     * @param mixed  $object  Object to test.
+     * @param string $type    Type name as string.
+     * @param string $message Message to display.
+     *
+     * @return boolean              True on pass.
+     * @access public
      */
-    function assertNotA($object, $type, $message = '%s') {
+    function assertNotA($object, $type, $message = '%s')
+    {
         return $this->assert(
-                new NotAExpectation($type),
-                $object,
-                $message);
+            new NotAExpectation($type),
+            $object,
+            $message);
     }
 
     /**
      *    Will trigger a pass if the two parameters have
      *    the same value only. Otherwise a fail.
-     *    @param mixed $first          Value to compare.
-     *    @param mixed $second         Value to compare.
-     *    @param string $message       Message to display.
-     *    @return boolean              True on pass
-     *    @access public
+     *
+     * @param mixed  $first   Value to compare.
+     * @param mixed  $second  Value to compare.
+     * @param string $message Message to display.
+     *
+     * @return boolean              True on pass
+     * @access public
      */
-    function assertEqual($first, $second, $message = '%s') {
+    function assertEqual($first, $second, $message = '%s')
+    {
         return $this->assert(
-                new EqualExpectation($first),
-                $second,
-                $message);
+            new EqualExpectation($first),
+            $second,
+            $message);
     }
 
     /**
      *    Will trigger a pass if the two parameters have
      *    a different value. Otherwise a fail.
-     *    @param mixed $first           Value to compare.
-     *    @param mixed $second          Value to compare.
-     *    @param string $message        Message to display.
-     *    @return boolean               True on pass
-     *    @access public
+     *
+     * @param mixed  $first   Value to compare.
+     * @param mixed  $second  Value to compare.
+     * @param string $message Message to display.
+     *
+     * @return boolean               True on pass
+     * @access public
      */
-    function assertNotEqual($first, $second, $message = '%s') {
+    function assertNotEqual($first, $second, $message = '%s')
+    {
         return $this->assert(
-                new NotEqualExpectation($first),
-                $second,
-                $message);
+            new NotEqualExpectation($first),
+            $second,
+            $message);
     }
 
     /**
      *    Will trigger a pass if the if the first parameter
      *    is near enough to the second by the margin.
-     *    @param mixed $first          Value to compare.
-     *    @param mixed $second         Value to compare.
-     *    @param mixed $margin         Fuzziness of match.
-     *    @param string $message       Message to display.
-     *    @return boolean              True on pass
-     *    @access public
+     *
+     * @param mixed  $first   Value to compare.
+     * @param mixed  $second  Value to compare.
+     * @param mixed  $margin  Fuzziness of match.
+     * @param string $message Message to display.
+     *
+     * @return boolean              True on pass
+     * @access public
      */
-    function assertWithinMargin($first, $second, $margin, $message = '%s') {
+    function assertWithinMargin($first, $second, $margin, $message = '%s')
+    {
         return $this->assert(
-                new WithinMarginExpectation($first, $margin),
-                $second,
-                $message);
+            new WithinMarginExpectation($first, $margin),
+            $second,
+            $message);
     }
 
     /**
      *    Will trigger a pass if the two parameters differ
      *    by more than the margin.
-     *    @param mixed $first          Value to compare.
-     *    @param mixed $second         Value to compare.
-     *    @param mixed $margin         Fuzziness of match.
-     *    @param string $message       Message to display.
-     *    @return boolean              True on pass
-     *    @access public
+     *
+     * @param mixed  $first   Value to compare.
+     * @param mixed  $second  Value to compare.
+     * @param mixed  $margin  Fuzziness of match.
+     * @param string $message Message to display.
+     *
+     * @return boolean              True on pass
+     * @access public
      */
-    function assertOutsideMargin($first, $second, $margin, $message = '%s') {
+    function assertOutsideMargin($first, $second, $margin, $message = '%s')
+    {
         return $this->assert(
-                new OutsideMarginExpectation($first, $margin),
-                $second,
-                $message);
+            new OutsideMarginExpectation($first, $margin),
+            $second,
+            $message);
     }
 
     /**
      *    Will trigger a pass if the two parameters have
      *    the same value and same type. Otherwise a fail.
-     *    @param mixed $first           Value to compare.
-     *    @param mixed $second          Value to compare.
-     *    @param string $message        Message to display.
-     *    @return boolean               True on pass
-     *    @access public
+     *
+     * @param mixed  $first   Value to compare.
+     * @param mixed  $second  Value to compare.
+     * @param string $message Message to display.
+     *
+     * @return boolean               True on pass
+     * @access public
      */
-    function assertIdentical($first, $second, $message = '%s') {
+    function assertIdentical($first, $second, $message = '%s')
+    {
         return $this->assert(
-                new IdenticalExpectation($first),
-                $second,
-                $message);
+            new IdenticalExpectation($first),
+            $second,
+            $message);
     }
 
     /**
      *    Will trigger a pass if the two parameters have
      *    the different value or different type.
-     *    @param mixed $first           Value to compare.
-     *    @param mixed $second          Value to compare.
-     *    @param string $message        Message to display.
-     *    @return boolean               True on pass
-     *    @access public
+     *
+     * @param mixed  $first   Value to compare.
+     * @param mixed  $second  Value to compare.
+     * @param string $message Message to display.
+     *
+     * @return boolean               True on pass
+     * @access public
      */
-    function assertNotIdentical($first, $second, $message = '%s') {
+    function assertNotIdentical($first, $second, $message = '%s')
+    {
         return $this->assert(
-                new NotIdenticalExpectation($first),
-                $second,
-                $message);
+            new NotIdenticalExpectation($first),
+            $second,
+            $message);
     }
 
     /**
@@ -231,22 +257,26 @@ class UnitTestCase extends SimpleTestCase {
      *    This will cause problems testing objects under
      *    E_STRICT.
      *    TODO: Replace with expectation.
-     *    @param mixed $first           Reference to check.
-     *    @param mixed $second          Hopefully the same variable.
-     *    @param string $message        Message to display.
-     *    @return boolean               True on pass
-     *    @access public
+     *
+     * @param mixed  $first   Reference to check.
+     * @param mixed  $second  Hopefully the same variable.
+     * @param string $message Message to display.
+     *
+     * @return boolean               True on pass
+     * @access public
      */
-    function assertReference(&$first, &$second, $message = '%s') {
+    function assertReference(&$first, &$second, $message = '%s')
+    {
         $dumper = new SimpleDumper();
         $message = sprintf(
-                $message,
-                '[' . $dumper->describeValue($first) .
-                        '] and [' . $dumper->describeValue($second) .
-                        '] should reference the same object');
+            $message,
+            '[' . $dumper->describeValue($first) .
+            '] and [' . $dumper->describeValue($second) .
+            '] should reference the same object');
+
         return $this->assertTrue(
-                SimpleTestCompatibility::isReference($first, $second),
-                $message);
+            SimpleTestCompatibility::isReference($first, $second),
+            $message);
     }
 
     /**
@@ -256,19 +286,23 @@ class UnitTestCase extends SimpleTestCase {
      *    That is, if values are passed in it has roughly
      *    the same affect as assertIdentical.
      *    TODO: Replace with expectation.
-     *    @param mixed $first           Object reference to check.
-     *    @param mixed $second          Hopefully the same object.
-     *    @param string $message        Message to display.
-     *    @return boolean               True on pass
-     *    @access public
+     *
+     * @param mixed  $first   Object reference to check.
+     * @param mixed  $second  Hopefully the same object.
+     * @param string $message Message to display.
+     *
+     * @return boolean               True on pass
+     * @access public
      */
-    function assertSame($first, $second, $message = '%s') {
+    function assertSame($first, $second, $message = '%s')
+    {
         $dumper = new SimpleDumper();
         $message = sprintf(
-                $message,
-                '[' . $dumper->describeValue($first) .
-                        '] and [' . $dumper->describeValue($second) .
-                        '] should reference the same object');
+            $message,
+            '[' . $dumper->describeValue($first) .
+            '] and [' . $dumper->describeValue($second) .
+            '] should reference the same object');
+
         return $this->assertTrue($first === $second, $message);
     }
 
@@ -276,23 +310,27 @@ class UnitTestCase extends SimpleTestCase {
      *    Will trigger a pass if both parameters refer
      *    to different objects. Fail otherwise. The objects
      *    have to be identical though.
-     *    @param mixed $first           Object reference to check.
-     *    @param mixed $second          Hopefully not the same object.
-     *    @param string $message        Message to display.
-     *    @return boolean               True on pass
-     *    @access public
+     *
+     * @param mixed  $first   Object reference to check.
+     * @param mixed  $second  Hopefully not the same object.
+     * @param string $message Message to display.
+     *
+     * @return boolean               True on pass
+     * @access public
      */
-    function assertClone($first, $second, $message = '%s') {
+    function assertClone($first, $second, $message = '%s')
+    {
         $dumper = new SimpleDumper();
         $message = sprintf(
-                $message,
-                '[' . $dumper->describeValue($first) .
-                        '] and [' . $dumper->describeValue($second) .
-                        '] should not be the same object');
+            $message,
+            '[' . $dumper->describeValue($first) .
+            '] and [' . $dumper->describeValue($second) .
+            '] should not be the same object');
         $identical = new IdenticalExpectation($first);
+
         return $this->assertTrue(
-                $identical->test($second) && ! ($first === $second),
-                $message);
+            $identical->test($second) && !($first === $second),
+            $message);
     }
 
     /**
@@ -301,80 +339,136 @@ class UnitTestCase extends SimpleTestCase {
      *    have to be identical references though.
      *    This will fail under E_STRICT with objects. Use
      *    assertClone() for this.
-     *    @param mixed $first           Object reference to check.
-     *    @param mixed $second          Hopefully not the same object.
-     *    @param string $message        Message to display.
-     *    @return boolean               True on pass
-     *    @access public
+     *
+     * @param mixed  $first   Object reference to check.
+     * @param mixed  $second  Hopefully not the same object.
+     * @param string $message Message to display.
+     *
+     * @return boolean               True on pass
+     * @access public
      */
-    function assertCopy(&$first, &$second, $message = "%s") {
+    function assertCopy(&$first, &$second, $message = "%s")
+    {
         $dumper = new SimpleDumper();
         $message = sprintf(
-                $message,
-                "[" . $dumper->describeValue($first) .
-                        "] and [" . $dumper->describeValue($second) .
-                        "] should not be the same object");
+            $message,
+            "[" . $dumper->describeValue($first) .
+            "] and [" . $dumper->describeValue($second) .
+            "] should not be the same object");
+
         return $this->assertFalse(
-                SimpleTestCompatibility::isReference($first, $second),
-                $message);
+            SimpleTestCompatibility::isReference($first, $second),
+            $message);
+    }
+
+    /**
+     *    Will be true on false and vice versa. False
+     *    is the PHP definition of false, so that null,
+     *    empty strings, zero and an empty array all count
+     *    as false.
+     *
+     * @param boolean $result  Pass on false.
+     * @param string  $message Message to display.
+     *
+     * @return boolean           True on pass
+     * @access public
+     */
+    function assertFalse($result, $message = '%s')
+    {
+        return $this->assert(new FalseExpectation(), $result, $message);
     }
 
     /**
      *    Will trigger a pass if the Perl regex pattern
      *    is found in the subject. Fail otherwise.
-     *    @param string $pattern    Perl regex to look for including
+     *
+     * @param string $pattern       Perl regex to look for including
      *                              the regex delimiters.
-     *    @param string $subject    String to search in.
-     *    @param string $message    Message to display.
-     *    @return boolean           True on pass
-     *    @access public
+     * @param string $subject       String to search in.
+     * @param string $message       Message to display.
+     *
+     * @return boolean           True on pass
+     * @access public
      */
-    function assertPattern($pattern, $subject, $message = '%s') {
+    function assertPattern($pattern, $subject, $message = '%s')
+    {
         return $this->assert(
-                new PatternExpectation($pattern),
-                $subject,
-                $message);
+            new PatternExpectation($pattern),
+            $subject,
+            $message);
     }
 
     /**
      *    Will trigger a pass if the perl regex pattern
      *    is not present in subject. Fail if found.
-     *    @param string $pattern    Perl regex to look for including
+     *
+     * @param string $pattern       Perl regex to look for including
      *                              the regex delimiters.
-     *    @param string $subject    String to search in.
-     *    @param string $message    Message to display.
-     *    @return boolean           True on pass
-     *    @access public
+     * @param string $subject       String to search in.
+     * @param string $message       Message to display.
+     *
+     * @return boolean           True on pass
+     * @access public
      */
-    function assertNoPattern($pattern, $subject, $message = '%s') {
+    function assertNoPattern($pattern, $subject, $message = '%s')
+    {
         return $this->assert(
-                new NoPatternExpectation($pattern),
-                $subject,
-                $message);
+            new NoPatternExpectation($pattern),
+            $subject,
+            $message);
     }
 
     /**
      *    Prepares for an error. If the error mismatches it
      *    passes through, otherwise it is swallowed. Any
      *    left over errors trigger failures.
-     *    @param SimpleExpectation/string $expected   The error to match.
-     *    @param string $message                      Message on failure.
-     *    @access public
+     *
+     * @param SimpleExpectation/string $expected   The error to match.
+     * @param string $message Message on failure.
+     *
+     * @access public
      */
-    function expectError($expected = false, $message = '%s') {
+    function expectError($expected = false, $message = '%s')
+    {
         $queue = SimpleTest::getContext()->get('SimpleErrorQueue');
         $queue->expectError($this->coerceExpectation($expected), $message);
+    }
+
+    /**
+     *    Creates an equality expectation if the
+     *    object/value is not already some type
+     *    of expectation.
+     *
+     * @param mixed $expected Expected value.
+     *
+     * @return SimpleExpectation   Expectation object.
+     * @access private
+     */
+    protected function coerceExpectation($expected)
+    {
+        if ($expected == false) {
+            return new TrueExpectation();
+        }
+        if (SimpleTestCompatibility::isA($expected, 'SimpleExpectation')) {
+            return $expected;
+        }
+
+        return new EqualExpectation(
+            is_string($expected) ? str_replace('%', '%%', $expected) : $expected);
     }
 
     /**
      *    Prepares for an exception. If the error mismatches it
      *    passes through, otherwise it is swallowed. Any
      *    left over errors trigger failures.
-     *    @param SimpleExpectation/Exception $expected  The error to match.
-     *    @param string $message                        Message on failure.
-     *    @access public
+     *
+     * @param SimpleExpectation/Exception $expected  The error to match.
+     * @param string $message Message on failure.
+     *
+     * @access public
      */
-    function expectException($expected = false, $message = '%s') {
+    function expectException($expected = false, $message = '%s')
+    {
         $queue = SimpleTest::getContext()->get('SimpleExceptionTrap');
         $line = $this->getAssertionLine();
         $queue->expectException($expected, $message . $line);
@@ -384,30 +478,15 @@ class UnitTestCase extends SimpleTestCase {
      *    Tells SimpleTest to ignore an upcoming exception as not relevant
      *    to the current test. It doesn't affect the test, whether thrown or
      *    not.
-     *    @param SimpleExpectation/Exception $ignored  The error to ignore.
-     *    @access public
+     *
+     * @param SimpleExpectation/Exception $ignored  The error to ignore.
+     *
+     * @access public
      */
-    function ignoreException($ignored = false) {
+    function ignoreException($ignored = false)
+    {
         SimpleTest::getContext()->get('SimpleExceptionTrap')->ignoreException($ignored);
     }
-
-    /**
-     *    Creates an equality expectation if the
-     *    object/value is not already some type
-     *    of expectation.
-     *    @param mixed $expected      Expected value.
-     *    @return SimpleExpectation   Expectation object.
-     *    @access private
-     */
-    protected function coerceExpectation($expected) {
-        if ($expected == false) {
-            return new TrueExpectation();
-        }
-        if (SimpleTestCompatibility::isA($expected, 'SimpleExpectation')) {
-            return $expected;
-        }
-        return new EqualExpectation(
-                is_string($expected) ? str_replace('%', '%%', $expected) : $expected);
-    }
 }
+
 ?>

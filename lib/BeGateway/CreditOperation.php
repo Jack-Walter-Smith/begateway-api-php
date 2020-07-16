@@ -36,38 +36,6 @@ class CreditOperation extends ApiAbstract
     }
 
     /**
-     * @param string $description
-     */
-    public function setDescription($description)
-    {
-        $this->_description = $description;
-    }
-
-    /**
-     * @return string
-     */
-    public function getDescription()
-    {
-        return $this->_description;
-    }
-
-    /**
-     * @param string $tracking_id
-     */
-    public function setTrackingId($tracking_id)
-    {
-        $this->_tracking_id = $tracking_id;
-    }
-
-    /**
-     * @return string
-     */
-    public function getTrackingId()
-    {
-        return $this->_tracking_id;
-    }
-
-    /**
      * @return array[]|mixed
      */
     protected function _buildRequestMessage()
@@ -87,5 +55,37 @@ class CreditOperation extends ApiAbstract
         Logger::getInstance()->write($request, Logger::DEBUG, get_class() . '::' . __FUNCTION__);
 
         return $request;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->_description;
+    }
+
+    /**
+     * @param string $description
+     */
+    public function setDescription($description)
+    {
+        $this->_description = $description;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTrackingId()
+    {
+        return $this->_tracking_id;
+    }
+
+    /**
+     * @param string $tracking_id
+     */
+    public function setTrackingId($tracking_id)
+    {
+        $this->_tracking_id = $tracking_id;
     }
 }

@@ -15,19 +15,20 @@ class QueryByPaymentToken extends ApiAbstract
     protected $_token;
 
     /**
+     * @return \BeGateway\Response|\BeGateway\ResponseCheckout
+     * @throws \Exception
+     */
+    public function submit()
+    {
+        return new ResponseCheckout($this->_remoteRequest());
+    }
+
+    /**
      * @return string
      */
     protected function _endpoint()
     {
         return Settings::$checkoutBase . '/ctp/api/checkouts/' . $this->getToken();
-    }
-
-    /**
-     * @param string $token
-     */
-    public function setToken($token)
-    {
-        $this->_token = $token;
     }
 
     /**
@@ -39,19 +40,18 @@ class QueryByPaymentToken extends ApiAbstract
     }
 
     /**
+     * @param string $token
+     */
+    public function setToken($token)
+    {
+        $this->_token = $token;
+    }
+
+    /**
      * @return mixed|string
      */
     protected function _buildRequestMessage()
     {
         return '';
-    }
-
-    /**
-     * @return \BeGateway\Response|\BeGateway\ResponseCheckout
-     * @throws \Exception
-     */
-    public function submit()
-    {
-        return new ResponseCheckout($this->_remoteRequest());
     }
 }

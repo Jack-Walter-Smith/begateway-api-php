@@ -10,13 +10,13 @@ namespace BeGateway;
 abstract class ChildTransaction extends ApiAbstract
 {
     /**
-     * @var string
-     */
-    protected $_parent_uid;
-    /**
      * @var \BeGateway\Money
      */
     public $money;
+    /**
+     * @var string
+     */
+    protected $_parent_uid;
 
     /**
      * ChildTransaction constructor.
@@ -24,22 +24,6 @@ abstract class ChildTransaction extends ApiAbstract
     public function __construct()
     {
         $this->money = new Money();
-    }
-
-    /**
-     * @param string $uid
-     */
-    public function setParentUid($uid)
-    {
-        $this->_parent_uid = $uid;
-    }
-
-    /**
-     * @return string
-     */
-    public function getParentUid()
-    {
-        return $this->_parent_uid;
     }
 
     /**
@@ -57,5 +41,21 @@ abstract class ChildTransaction extends ApiAbstract
         Logger::getInstance()->write($request, Logger::DEBUG, get_class() . '::' . __FUNCTION__);
 
         return $request;
+    }
+
+    /**
+     * @return string
+     */
+    public function getParentUid()
+    {
+        return $this->_parent_uid;
+    }
+
+    /**
+     * @param string $uid
+     */
+    public function setParentUid($uid)
+    {
+        $this->_parent_uid = $uid;
     }
 }

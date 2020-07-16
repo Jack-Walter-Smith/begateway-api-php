@@ -16,10 +16,10 @@ class ResponseApiProduct extends ResponseApi
     {
         return implode('/',
             array(
-                \BeGateway\Settings::$checkoutBase,
+                Settings::$checkoutBase,
                 'v2', 'confirm_order',
                 $this->getId(),
-                \BeGateway\Settings::$shopId,
+                Settings::$shopId,
             )
         );
     }
@@ -31,7 +31,7 @@ class ResponseApiProduct extends ResponseApi
     {
         return implode('/',
             array(
-                \BeGateway\Settings::$apiBase,
+                Settings::$apiBase,
                 'products',
                 $this->getId(),
                 'pay',

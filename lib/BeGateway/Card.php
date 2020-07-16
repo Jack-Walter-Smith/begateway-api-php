@@ -71,6 +71,14 @@ class Card
     }
 
     /**
+     * @return string
+     */
+    public function getCardNumber()
+    {
+        return $this->_card_number;
+    }
+
+    /**
      * @param string $number
      */
     public function setCardNumber($number)
@@ -81,9 +89,9 @@ class Card
     /**
      * @return string
      */
-    public function getCardNumber()
+    public function getCardHolder()
     {
-        return $this->_card_number;
+        return $this->_card_holder;
     }
 
     /**
@@ -95,11 +103,11 @@ class Card
     }
 
     /**
-     * @return string
+     * @return int
      */
-    public function getCardHolder()
+    public function getCardExpMonth()
     {
-        return $this->_card_holder;
+        return $this->_card_exp_month;
     }
 
     /**
@@ -115,11 +123,11 @@ class Card
     }
 
     /**
-     * @return int
+     * @return string
      */
-    public function getCardExpMonth()
+    public function getCardExpYear()
     {
-        return $this->_card_exp_month;
+        return $this->_card_exp_year;
     }
 
     /**
@@ -133,9 +141,9 @@ class Card
     /**
      * @return string
      */
-    public function getCardExpYear()
+    public function getCardCvc()
     {
-        return $this->_card_exp_year;
+        return $this->_card_cvc;
     }
 
     /**
@@ -147,11 +155,11 @@ class Card
     }
 
     /**
-     * @return string
+     * @return null|string
      */
-    public function getCardCvc()
+    public function getCardToken()
     {
-        return $this->_card_cvc;
+        return $this->_card_token;
     }
 
     /**
@@ -163,11 +171,11 @@ class Card
     }
 
     /**
-     * @return null|string
+     * @return bool
      */
-    public function getCardToken()
+    public function getSkipThreeDSecure()
     {
-        return $this->_card_token;
+        return $this->_skip_three_d_secure;
     }
 
     /**
@@ -179,11 +187,11 @@ class Card
     }
 
     /**
-     * @return bool
+     * @return string
      */
-    public function getSkipThreeDSecure()
+    public function getBrand()
     {
-        return $this->_skip_three_d_secure;
+        return $this->_brand;
     }
 
     /**
@@ -197,9 +205,9 @@ class Card
     /**
      * @return string
      */
-    public function getBrand()
+    public function getFirstOne()
     {
-        return $this->_brand;
+        return $this->_first_one;
     }
 
     /**
@@ -213,9 +221,9 @@ class Card
     /**
      * @return string
      */
-    public function getFirstOne()
+    public function getLastFour()
     {
-        return $this->_first_one;
+        return $this->_last_four;
     }
 
     /**
@@ -224,13 +232,5 @@ class Card
     public function setLastFour($digits)
     {
         $this->_last_four = $digits;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLastFour()
-    {
-        return $this->_last_four;
     }
 }

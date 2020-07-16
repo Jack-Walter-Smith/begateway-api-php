@@ -2,6 +2,8 @@
 
 namespace BeGateway;
 
+use Exception;
+
 /**
  * Class Product
  *
@@ -85,207 +87,12 @@ class Product extends ApiAbstract
     }
 
     /**
-     * @return string
-     */
-    protected function _endpoint()
-    {
-        return Settings::$apiBase . '/products';
-    }
-
-    /**
-     * @return array|mixed
-     * @throws \Exception
-     */
-    protected function _buildRequestMessage()
-    {
-        $request = array(
-            'name' => $this->getName(),
-            'description' => $this->getDescription(),
-            'amount' => $this->money->getCents(),
-            'currency' => $this->money->getCurrency(),
-            'infinite' => $this->getInfinite(),
-            'language' => $this->getLanguage(),
-            'notification_url' => $this->getNotificationUrl(),
-            'success_url' => $this->getSuccessUrl(),
-            'fail_url' => $this->getFailUrl(),
-            'return_url' => $this->getReturnUrl(),
-            'immortal' => $this->getImmortal(),
-            'visible' => $this->getVisible(),
-            'test' => $this->getTestMode(),
-            'transaction_type' => $this->getTransactionType(),
-            'additional_data' => array(
-                'receipt_text' => $this->additional_data->getReceipt(),
-                'contract' => $this->additional_data->getContract(),
-                'meta' => $this->additional_data->getMeta(),
-            ),
-        );
-
-        if ($this->_quantity > 0) {
-            $request['quantity'] = $this->getQuantity();
-            $request['infinite'] = false;
-        }
-
-        if (isset($this->_expired_at)) {
-            $request['expired_at'] = $this->getExpiredAt();
-            $request['immortal'] = false;
-        }
-
-        Logger::getInstance()->write($request, Logger::DEBUG, get_class() . '::' . __FUNCTION__);
-
-        return $request;
-    }
-
-    /**
      * @return \BeGateway\Response|\BeGateway\ResponseApiProduct
      * @throws \Exception
      */
     public function submit()
     {
         return new ResponseApiProduct($this->_remoteRequest());
-    }
-
-    /**
-     * @param string $name
-     */
-    public function setName($name)
-    {
-        $this->_name = $name;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getName()
-    {
-        return $this->_name;
-    }
-
-    /**
-     * @param string $description
-     */
-    public function setDescription($description)
-    {
-        $this->_description = $description;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getDescription()
-    {
-        return $this->_description;
-    }
-
-    /**
-     * @param int $quantity
-     */
-    public function setQuantity($quantity)
-    {
-        $this->_quantity = $quantity;
-    }
-
-    /**
-     * @return int|null
-     */
-    public function getQuantity()
-    {
-        return $this->_quantity;
-    }
-
-    /**
-     * @param bool $state
-     */
-    public function setInfinite($state = true)
-    {
-        $this->_infinite = $state;
-    }
-
-    /**
-     * @return bool
-     */
-    public function getInfinite()
-    {
-        return $this->_infinite;
-    }
-
-    /**
-     * @param bool $state
-     */
-    public function setImmortal($state = true)
-    {
-        $this->_immortal = $state;
-    }
-
-    /**
-     * @return bool
-     */
-    public function getImmortal()
-    {
-        return $this->_immortal;
-    }
-
-    /**
-     * @param string $notification_url
-     */
-    public function setNotificationUrl($notification_url)
-    {
-        $this->_notification_url = $notification_url;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getNotificationUrl()
-    {
-        return $this->_notification_url;
-    }
-
-    /**
-     * @param string $success_url
-     */
-    public function setSuccessUrl($success_url)
-    {
-        $this->_success_url = $success_url;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getSuccessUrl()
-    {
-        return $this->_success_url;
-    }
-
-    /**
-     * @param string $fail_url
-     */
-    public function setFailUrl($fail_url)
-    {
-        $this->_fail_url = $fail_url;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getFailUrl()
-    {
-        return $this->_fail_url;
-    }
-
-    /**
-     * @param string $return_url
-     */
-    public function setReturnUrl($return_url)
-    {
-        $this->_return_url = $return_url;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getReturnUrl()
-    {
-        return $this->_return_url;
     }
 
     /**
@@ -305,97 +112,30 @@ class Product extends ApiAbstract
     }
 
     /**
-     * @param string $transactionType
-     *
-     * @throws \Exception
-     */
-    public function setTransactionType($transactionType)
-    {
-        $method = "set{$transactionType}TransactionType";
-
-        if (method_exists($this, $method)) {
-            $this->{$method}();
-        } else {
-            throw new \Exception("Transaction type '$transactionType' cannot be set in " . __CLASS__);
-        }
-    }
-
-    /**
-     * @return string
-     */
-    public function getTransactionType()
-    {
-        return $this->_transaction_type;
-    }
-
-    /**
-     * @param string $language_code
-     */
-    public function setLanguage($language_code)
-    {
-        if (in_array($language_code, Language::getSupportedLanguages())) {
-            $this->_language = $language_code;
-        } else {
-            $this->_language = Language::getDefaultLanguage();
-        }
-    }
-
-    /**
-     * @return mixed|string
-     */
-    public function getLanguage()
-    {
-        return $this->_language;
-    }
-
-    # date when payment expires for payment
-    # date is in ISO8601 format
-    /**
-     * @param string $date
-     */
-    public function setExpiredAt($date)
-    {
-        $iso8601 = NULL;
-
-        if ($date != NULL)
-            $iso8601 = date(DATE_ISO8601, strtotime($date));
-
-        $this->_expired_at = $iso8601;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getExpiredAt()
-    {
-        return $this->_expired_at;
-    }
-
-    /**
-     * @param array $fields
-     */
-    public function setVisible($fields)
-    {
-        // reset
-        $this->_visible = array();
-
-        $this->_visible = array_unique($fields);
-    }
-
-    /**
-     * @return array
-     */
-    public function getVisible()
-    {
-        return $this->_visible;
-    }
-
-    /**
      * @return void
      */
     public function setPhoneVisible()
     {
         $this->_visible = self::_searchAndAdd($this->_visible, 'phone');
+    }
+
+    /**
+     * @param array  $array
+     * @param string $value
+     *
+     * @return mixed
+     */
+    private function _searchAndAdd($array, $value)
+    {
+        // search for $value in $array
+        // if not found, adds $value to $array and returns $array
+        // otherwise returns not altered $array
+        $arr = $array;
+        if (!in_array($value, $arr)) {
+            array_push($arr, $value);
+        }
+
+        return $arr;
     }
 
     /**
@@ -551,11 +291,224 @@ class Product extends ApiAbstract
     }
 
     /**
-     * @param bool $mode
+     * @return string
      */
-    public function setTestMode($mode = true)
+    protected function _endpoint()
     {
-        $this->_test_mode = $mode;
+        return Settings::$apiBase . '/products';
+    }
+
+    /**
+     * @return array|mixed
+     * @throws \Exception
+     */
+    protected function _buildRequestMessage()
+    {
+        $request = array(
+            'name' => $this->getName(),
+            'description' => $this->getDescription(),
+            'amount' => $this->money->getCents(),
+            'currency' => $this->money->getCurrency(),
+            'infinite' => $this->getInfinite(),
+            'language' => $this->getLanguage(),
+            'notification_url' => $this->getNotificationUrl(),
+            'success_url' => $this->getSuccessUrl(),
+            'fail_url' => $this->getFailUrl(),
+            'return_url' => $this->getReturnUrl(),
+            'immortal' => $this->getImmortal(),
+            'visible' => $this->getVisible(),
+            'test' => $this->getTestMode(),
+            'transaction_type' => $this->getTransactionType(),
+            'additional_data' => array(
+                'receipt_text' => $this->additional_data->getReceipt(),
+                'contract' => $this->additional_data->getContract(),
+                'meta' => $this->additional_data->getMeta(),
+            ),
+        );
+
+        if ($this->_quantity > 0) {
+            $request['quantity'] = $this->getQuantity();
+            $request['infinite'] = false;
+        }
+
+        if (isset($this->_expired_at)) {
+            $request['expired_at'] = $this->getExpiredAt();
+            $request['immortal'] = false;
+        }
+
+        Logger::getInstance()->write($request, Logger::DEBUG, get_class() . '::' . __FUNCTION__);
+
+        return $request;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getName()
+    {
+        return $this->_name;
+    }
+
+    # date when payment expires for payment
+    # date is in ISO8601 format
+
+    /**
+     * @param string $name
+     */
+    public function setName($name)
+    {
+        $this->_name = $name;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getDescription()
+    {
+        return $this->_description;
+    }
+
+    /**
+     * @param string $description
+     */
+    public function setDescription($description)
+    {
+        $this->_description = $description;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getInfinite()
+    {
+        return $this->_infinite;
+    }
+
+    /**
+     * @param bool $state
+     */
+    public function setInfinite($state = true)
+    {
+        $this->_infinite = $state;
+    }
+
+    /**
+     * @return mixed|string
+     */
+    public function getLanguage()
+    {
+        return $this->_language;
+    }
+
+    /**
+     * @param string $language_code
+     */
+    public function setLanguage($language_code)
+    {
+        if (in_array($language_code, Language::getSupportedLanguages())) {
+            $this->_language = $language_code;
+        } else {
+            $this->_language = Language::getDefaultLanguage();
+        }
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getNotificationUrl()
+    {
+        return $this->_notification_url;
+    }
+
+    /**
+     * @param string $notification_url
+     */
+    public function setNotificationUrl($notification_url)
+    {
+        $this->_notification_url = $notification_url;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getSuccessUrl()
+    {
+        return $this->_success_url;
+    }
+
+    /**
+     * @param string $success_url
+     */
+    public function setSuccessUrl($success_url)
+    {
+        $this->_success_url = $success_url;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getFailUrl()
+    {
+        return $this->_fail_url;
+    }
+
+    /**
+     * @param string $fail_url
+     */
+    public function setFailUrl($fail_url)
+    {
+        $this->_fail_url = $fail_url;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getReturnUrl()
+    {
+        return $this->_return_url;
+    }
+
+    /**
+     * @param string $return_url
+     */
+    public function setReturnUrl($return_url)
+    {
+        $this->_return_url = $return_url;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getImmortal()
+    {
+        return $this->_immortal;
+    }
+
+    /**
+     * @param bool $state
+     */
+    public function setImmortal($state = true)
+    {
+        $this->_immortal = $state;
+    }
+
+    /**
+     * @return array
+     */
+    public function getVisible()
+    {
+        return $this->_visible;
+    }
+
+    /**
+     * @param array $fields
+     */
+    public function setVisible($fields)
+    {
+        // reset
+        $this->_visible = array();
+
+        $this->_visible = array_unique($fields);
     }
 
     /**
@@ -567,21 +520,71 @@ class Product extends ApiAbstract
     }
 
     /**
-     * @param array $array
-     * @param string $value
-     *
-     * @return mixed
+     * @param bool $mode
      */
-    private function _searchAndAdd($array, $value)
+    public function setTestMode($mode = true)
     {
-        // search for $value in $array
-        // if not found, adds $value to $array and returns $array
-        // otherwise returns not altered $array
-        $arr = $array;
-        if (!in_array($value, $arr)) {
-            array_push($arr, $value);
-        }
+        $this->_test_mode = $mode;
+    }
 
-        return $arr;
+    /**
+     * @return string
+     */
+    public function getTransactionType()
+    {
+        return $this->_transaction_type;
+    }
+
+    /**
+     * @param string $transactionType
+     *
+     * @throws \Exception
+     */
+    public function setTransactionType($transactionType)
+    {
+        $method = "set{$transactionType}TransactionType";
+
+        if (method_exists($this, $method)) {
+            $this->{$method}();
+        } else {
+            throw new Exception("Transaction type '$transactionType' cannot be set in " . __CLASS__);
+        }
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getQuantity()
+    {
+        return $this->_quantity;
+    }
+
+    /**
+     * @param int $quantity
+     */
+    public function setQuantity($quantity)
+    {
+        $this->_quantity = $quantity;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getExpiredAt()
+    {
+        return $this->_expired_at;
+    }
+
+    /**
+     * @param string $date
+     */
+    public function setExpiredAt($date)
+    {
+        $iso8601 = NULL;
+
+        if ($date != NULL)
+            $iso8601 = date(DATE_ISO8601, strtotime($date));
+
+        $this->_expired_at = $iso8601;
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 require_once __DIR__ . '/../lib/BeGateway.php';
 require_once __DIR__ . '/test_shop_data.php';
 
@@ -17,7 +18,7 @@ $transaction->setTestMode(true);
 $response = $transaction->submit();
 
 if ($response->isSuccess()) {
-  print("Product Id: " . $response->getId() . PHP_EOL);
-  print("Link to pay: " . $response->getPayLink() . PHP_EOL);
-  print("URL for website: " . $response->getPayUrl() . PHP_EOL);
+    print("Product Id: " . $response->getId() . PHP_EOL);
+    print("Link to pay: " . $response->getPayLink() . PHP_EOL);
+    print("URL for website: " . $response->getPayUrl() . PHP_EOL);
 }

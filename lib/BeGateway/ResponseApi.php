@@ -10,14 +10,6 @@ namespace BeGateway;
 class ResponseApi extends ResponseBase
 {
     /**
-     * @return bool
-     */
-    public function isSuccess()
-    {
-        return isset($this->getResponse()->id);
-    }
-
-    /**
      * @return mixed
      */
     public function getId()
@@ -25,6 +17,14 @@ class ResponseApi extends ResponseBase
         if ($this->isSuccess()) {
             return $this->getResponse()->id;
         }
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSuccess()
+    {
+        return isset($this->getResponse()->id);
     }
 
     /**

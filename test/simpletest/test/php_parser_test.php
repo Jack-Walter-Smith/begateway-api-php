@@ -1,4 +1,5 @@
 <?php
+
 // $Id: php_parser_test.php 1911 2009-07-29 16:38:04Z lastcraft $
 require_once(dirname(__FILE__) . '/../autorun.php');
 require_once(dirname(__FILE__) . '/../php_parser.php');
@@ -7,35 +8,39 @@ Mock::generate('SimplePage');
 Mock::generate('SimplePhpPageBuilder');
 Mock::generate('SimpleHttpResponse');
 Mock::generatePartial(
-        'SimplePhpPageBuilder',
-        'PartialSimplePhpPageBuilder',
-        array('createPage', 'createParser'));
+    'SimplePhpPageBuilder',
+    'PartialSimplePhpPageBuilder',
+    array('createPage', 'createParser'));
 Mock::generate('SimpleHtmlSaxParser');
 Mock::generate('SimplePhpPageBuilder');
 
-class TestOfParallelRegex extends UnitTestCase {
-
-    function testNoPatterns() {
+class TestOfParallelRegex extends UnitTestCase
+{
+    function testNoPatterns()
+    {
         $regex = new ParallelRegex(false);
         $this->assertFalse($regex->match("Hello", $match));
         $this->assertEqual($match, "");
     }
 
-    function testNoSubject() {
+    function testNoSubject()
+    {
         $regex = new ParallelRegex(false);
         $regex->addPattern(".*");
         $this->assertTrue($regex->match("", $match));
         $this->assertEqual($match, "");
     }
 
-    function testMatchAll() {
+    function testMatchAll()
+    {
         $regex = new ParallelRegex(false);
         $regex->addPattern(".*");
         $this->assertTrue($regex->match("Hello", $match));
         $this->assertEqual($match, "Hello");
     }
 
-    function testCaseSensitive() {
+    function testCaseSensitive()
+    {
         $regex = new ParallelRegex(true);
         $regex->addPattern("abc");
         $this->assertTrue($regex->match("abcdef", $match));
@@ -44,7 +49,8 @@ class TestOfParallelRegex extends UnitTestCase {
         $this->assertEqual($match, "abc");
     }
 
-    function testCaseInsensitive() {
+    function testCaseInsensitive()
+    {
         $regex = new ParallelRegex(false);
         $regex->addPattern("abc");
         $this->assertTrue($regex->match("abcdef", $match));
@@ -53,7 +59,8 @@ class TestOfParallelRegex extends UnitTestCase {
         $this->assertEqual($match, "ABC");
     }
 
-    function testMatchMultiple() {
+    function testMatchMultiple()
+    {
         $regex = new ParallelRegex(true);
         $regex->addPattern("abc");
         $regex->addPattern("ABC");
@@ -64,7 +71,8 @@ class TestOfParallelRegex extends UnitTestCase {
         $this->assertFalse($regex->match("Hello", $match));
     }
 
-    function testPatternLabels() {
+    function testPatternLabels()
+    {
         $regex = new ParallelRegex(false);
         $regex->addPattern("abc", "letter");
         $regex->addPattern("123", "number");
@@ -75,19 +83,22 @@ class TestOfParallelRegex extends UnitTestCase {
     }
 }
 
-class TestOfStateStack extends UnitTestCase {
-
-    function testStartState() {
+class TestOfStateStack extends UnitTestCase
+{
+    function testStartState()
+    {
         $stack = new SimpleStateStack("one");
         $this->assertEqual($stack->getCurrent(), "one");
     }
 
-    function testExhaustion() {
+    function testExhaustion()
+    {
         $stack = new SimpleStateStack("one");
         $this->assertFalse($stack->leave());
     }
 
-    function testStateMoves() {
+    function testStateMoves()
+    {
         $stack = new SimpleStateStack("one");
         $stack->enter("two");
         $this->assertEqual($stack->getCurrent(), "two");
@@ -103,22 +114,27 @@ class TestOfStateStack extends UnitTestCase {
     }
 }
 
-class TestParser {
-
-    function accept() {
+class TestParser
+{
+    function accept()
+    {
     }
 
-    function a() {
+    function a()
+    {
     }
 
-    function b() {
+    function b()
+    {
     }
 }
+
 Mock::generate('TestParser');
 
-class TestOfLexer extends UnitTestCase {
-
-    function testEmptyPage() {
+class TestOfLexer extends UnitTestCase
+{
+    function testEmptyPage()
+    {
         $handler = new MockTestParser();
         $handler->expectNever("accept");
         $handler->setReturnValue("accept", true);
@@ -129,7 +145,8 @@ class TestOfLexer extends UnitTestCase {
         $this->assertTrue($lexer->parse(""));
     }
 
-    function testSinglePattern() {
+    function testSinglePattern()
+    {
         $handler = new MockTestParser();
         $handler->expectAt(0, "accept", array("aaa", LEXER_MATCHED));
         $handler->expectAt(1, "accept", array("x", LEXER_UNMATCHED));
@@ -146,7 +163,8 @@ class TestOfLexer extends UnitTestCase {
         $this->assertTrue($lexer->parse("aaaxayyyaxaaaz"));
     }
 
-    function testMultiplePattern() {
+    function testMultiplePattern()
+    {
         $handler = new MockTestParser();
         $target = array("a", "b", "a", "bb", "x", "b", "a", "xxxxxx", "a", "x");
         for ($i = 0; $i < count($target); $i++) {
@@ -161,9 +179,10 @@ class TestOfLexer extends UnitTestCase {
     }
 }
 
-class TestOfLexerModes extends UnitTestCase {
-
-    function testIsolatedPattern() {
+class TestOfLexerModes extends UnitTestCase
+{
+    function testIsolatedPattern()
+    {
         $handler = new MockTestParser();
         $handler->expectAt(0, "a", array("a", LEXER_MATCHED));
         $handler->expectAt(1, "a", array("b", LEXER_UNMATCHED));
@@ -181,7 +200,8 @@ class TestOfLexerModes extends UnitTestCase {
         $this->assertTrue($lexer->parse("abaabxbaaaxaaaax"));
     }
 
-    function testModeChange() {
+    function testModeChange()
+    {
         $handler = new MockTestParser();
         $handler->expectAt(0, "a", array("a", LEXER_MATCHED));
         $handler->expectAt(1, "a", array("b", LEXER_UNMATCHED));
@@ -207,7 +227,8 @@ class TestOfLexerModes extends UnitTestCase {
         $this->assertTrue($lexer->parse("abaabaaa:ababbabbba"));
     }
 
-    function testNesting() {
+    function testNesting()
+    {
         $handler = new MockTestParser();
         $handler->setReturnValue("a", true);
         $handler->setReturnValue("b", true);
@@ -232,7 +253,8 @@ class TestOfLexerModes extends UnitTestCase {
         $this->assertTrue($lexer->parse("aabaab(bbabb)aab"));
     }
 
-    function testSingular() {
+    function testSingular()
+    {
         $handler = new MockTestParser();
         $handler->setReturnValue("a", true);
         $handler->setReturnValue("b", true);
@@ -250,7 +272,8 @@ class TestOfLexerModes extends UnitTestCase {
         $this->assertTrue($lexer->parse("aabaaxxbbbxx"));
     }
 
-    function testUnwindTooFar() {
+    function testUnwindTooFar()
+    {
         $handler = new MockTestParser();
         $handler->setReturnValue("a", true);
         $handler->expectAt(0, "a", array("aa", LEXER_MATCHED));
@@ -263,9 +286,10 @@ class TestOfLexerModes extends UnitTestCase {
     }
 }
 
-class TestOfLexerHandlers extends UnitTestCase {
-
-    function testModeMapping() {
+class TestOfLexerHandlers extends UnitTestCase
+{
+    function testModeMapping()
+    {
         $handler = new MockTestParser();
         $handler->setReturnValue("a", true);
         $handler->expectAt(0, "a", array("aa", LEXER_MATCHED));
@@ -287,20 +311,10 @@ class TestOfLexerHandlers extends UnitTestCase {
     }
 }
 
-class TestOfSimpleHtmlLexer extends UnitTestCase {
-
-    function &createParser() {
-        $parser = new MockSimpleHtmlSaxParser();
-        $parser->setReturnValue('acceptStartToken', true);
-        $parser->setReturnValue('acceptEndToken', true);
-        $parser->setReturnValue('acceptAttributeToken', true);
-        $parser->setReturnValue('acceptEntityToken', true);
-        $parser->setReturnValue('acceptTextToken', true);
-        $parser->setReturnValue('ignore', true);
-        return $parser;
-    }
-
-    function testNoContent() {
+class TestOfSimpleHtmlLexer extends UnitTestCase
+{
+    function testNoContent()
+    {
         $parser = $this->createParser();
         $parser->expectNever('acceptStartToken');
         $parser->expectNever('acceptEndToken');
@@ -311,14 +325,29 @@ class TestOfSimpleHtmlLexer extends UnitTestCase {
         $this->assertTrue($lexer->parse(''));
     }
 
-    function testUninteresting() {
+    function &createParser()
+    {
+        $parser = new MockSimpleHtmlSaxParser();
+        $parser->setReturnValue('acceptStartToken', true);
+        $parser->setReturnValue('acceptEndToken', true);
+        $parser->setReturnValue('acceptAttributeToken', true);
+        $parser->setReturnValue('acceptEntityToken', true);
+        $parser->setReturnValue('acceptTextToken', true);
+        $parser->setReturnValue('ignore', true);
+
+        return $parser;
+    }
+
+    function testUninteresting()
+    {
         $parser = $this->createParser();
         $parser->expectOnce('acceptTextToken', array('<html></html>', '*'));
         $lexer = new SimpleHtmlLexer($parser);
         $this->assertTrue($lexer->parse('<html></html>'));
     }
 
-    function testSkipCss() {
+    function testSkipCss()
+    {
         $parser = $this->createParser();
         $parser->expectNever('acceptTextToken');
         $parser->expectAtLeastOnce('ignore');
@@ -326,15 +355,17 @@ class TestOfSimpleHtmlLexer extends UnitTestCase {
         $this->assertTrue($lexer->parse("<style>Lot's of styles</style>"));
     }
 
-    function testSkipJavaScript() {
+    function testSkipJavaScript()
+    {
         $parser = $this->createParser();
         $parser->expectNever('acceptTextToken');
         $parser->expectAtLeastOnce('ignore');
         $lexer = new SimpleHtmlLexer($parser);
-        $this->assertTrue($lexer->parse("<SCRIPT>Javascript code {';:^%^%£$'@\"*(}</SCRIPT>"));
+        $this->assertTrue($lexer->parse("<SCRIPT>Javascript code {';:^%^%ï¿½$'@\"*(}</SCRIPT>"));
     }
 
-    function testSkipHtmlComments() {
+    function testSkipHtmlComments()
+    {
         $parser = $this->createParser();
         $parser->expectNever('acceptTextToken');
         $parser->expectAtLeastOnce('ignore');
@@ -342,7 +373,8 @@ class TestOfSimpleHtmlLexer extends UnitTestCase {
         $this->assertTrue($lexer->parse("<!-- <title>title</title><style>styles</style> -->"));
     }
 
-    function testTagWithNoAttributes() {
+    function testTagWithNoAttributes()
+    {
         $parser = $this->createParser();
         $parser->expectAt(0, 'acceptStartToken', array('<title', '*'));
         $parser->expectAt(1, 'acceptStartToken', array('>', '*'));
@@ -353,7 +385,8 @@ class TestOfSimpleHtmlLexer extends UnitTestCase {
         $this->assertTrue($lexer->parse('<title>Hello</title>'));
     }
 
-    function testTagWithAttributes() {
+    function testTagWithAttributes()
+    {
         $parser = $this->createParser();
         $parser->expectOnce('acceptTextToken', array('label', '*'));
         $parser->expectAt(0, 'acceptStartToken', array('<a', '*'));
@@ -370,17 +403,10 @@ class TestOfSimpleHtmlLexer extends UnitTestCase {
     }
 }
 
-class TestOfHtmlSaxParser extends UnitTestCase {
-
-    function createListener() {
-        $listener = new MockSimplePhpPageBuilder();
-        $listener->setReturnValue('startElement', true);
-        $listener->setReturnValue('addContent', true);
-        $listener->setReturnValue('endElement', true);
-        return $listener;
-    }
-
-    function testFramesetTag() {
+class TestOfHtmlSaxParser extends UnitTestCase
+{
+    function testFramesetTag()
+    {
         $listener = $this->createListener();
         $listener->expectOnce('startElement', array('frameset', array()));
         $listener->expectOnce('addContent', array('Frames'));
@@ -389,16 +415,28 @@ class TestOfHtmlSaxParser extends UnitTestCase {
         $this->assertTrue($parser->parse('<frameset>Frames</frameset>'));
     }
 
-    function testTagWithUnquotedAttributes() {
+    function createListener()
+    {
+        $listener = new MockSimplePhpPageBuilder();
+        $listener->setReturnValue('startElement', true);
+        $listener->setReturnValue('addContent', true);
+        $listener->setReturnValue('endElement', true);
+
+        return $listener;
+    }
+
+    function testTagWithUnquotedAttributes()
+    {
         $listener = $this->createListener();
         $listener->expectOnce(
-                'startElement',
-                array('input', array('name' => 'a.b.c', 'value' => 'd')));
+            'startElement',
+            array('input', array('name' => 'a.b.c', 'value' => 'd')));
         $parser = new SimpleHtmlSaxParser($listener);
         $this->assertTrue($parser->parse('<input name=a.b.c value = d>'));
     }
 
-    function testTagInsideContent() {
+    function testTagInsideContent()
+    {
         $listener = $this->createListener();
         $listener->expectOnce('startElement', array('a', array()));
         $listener->expectAt(0, 'addContent', array('<html>'));
@@ -407,7 +445,8 @@ class TestOfHtmlSaxParser extends UnitTestCase {
         $this->assertTrue($parser->parse('<html><a></a></html>'));
     }
 
-    function testTagWithInternalContent() {
+    function testTagWithInternalContent()
+    {
         $listener = $this->createListener();
         $listener->expectOnce('startElement', array('a', array()));
         $listener->expectOnce('addContent', array('label'));
@@ -416,7 +455,8 @@ class TestOfHtmlSaxParser extends UnitTestCase {
         $this->assertTrue($parser->parse('<a>label</a>'));
     }
 
-    function testLinkAddress() {
+    function testLinkAddress()
+    {
         $listener = $this->createListener();
         $listener->expectOnce('startElement', array('a', array('href' => 'here.html')));
         $listener->expectOnce('addContent', array('label'));
@@ -425,7 +465,8 @@ class TestOfHtmlSaxParser extends UnitTestCase {
         $this->assertTrue($parser->parse("<a href = 'here.html'>label</a>"));
     }
 
-    function testEncodedAttribute() {
+    function testEncodedAttribute()
+    {
         $listener = $this->createListener();
         $listener->expectOnce('startElement', array('a', array('href' => 'here&there.html')));
         $listener->expectOnce('addContent', array('label'));
@@ -434,7 +475,8 @@ class TestOfHtmlSaxParser extends UnitTestCase {
         $this->assertTrue($parser->parse("<a href = 'here&amp;there.html'>label</a>"));
     }
 
-    function testTagWithId() {
+    function testTagWithId()
+    {
         $listener = $this->createListener();
         $listener->expectOnce('startElement', array('a', array('id' => '0')));
         $listener->expectOnce('addContent', array('label'));
@@ -443,38 +485,42 @@ class TestOfHtmlSaxParser extends UnitTestCase {
         $this->assertTrue($parser->parse('<a id="0">label</a>'));
     }
 
-    function testTagWithEmptyAttributes() {
+    function testTagWithEmptyAttributes()
+    {
         $listener = $this->createListener();
         $listener->expectOnce(
-                'startElement',
-                array('option', array('value' => '', 'selected' => '')));
+            'startElement',
+            array('option', array('value' => '', 'selected' => '')));
         $listener->expectOnce('addContent', array('label'));
         $listener->expectOnce('endElement', array('option'));
         $parser = new SimpleHtmlSaxParser($listener);
         $this->assertTrue($parser->parse('<option value="" selected>label</option>'));
     }
 
-    function testComplexTagWithLotsOfCaseVariations() {
+    function testComplexTagWithLotsOfCaseVariations()
+    {
         $listener = $this->createListener();
         $listener->expectOnce(
-                'startElement',
-                array('a', array('href' => 'here.html', 'style' => "'cool'")));
+            'startElement',
+            array('a', array('href' => 'here.html', 'style' => "'cool'")));
         $listener->expectOnce('addContent', array('label'));
         $listener->expectOnce('endElement', array('a'));
         $parser = new SimpleHtmlSaxParser($listener);
         $this->assertTrue($parser->parse('<A HREF = \'here.html\' Style="\'cool\'">label</A>'));
     }
 
-    function testXhtmlSelfClosingTag() {
+    function testXhtmlSelfClosingTag()
+    {
         $listener = $this->createListener();
         $listener->expectOnce(
-                'startElement',
-                array('input', array('type' => 'submit', 'name' => 'N', 'value' => 'V')));
+            'startElement',
+            array('input', array('type' => 'submit', 'name' => 'N', 'value' => 'V')));
         $parser = new SimpleHtmlSaxParser($listener);
         $this->assertTrue($parser->parse('<input type="submit" name="N" value="V" />'));
     }
 
-    function testNestedFrameInFrameset() {
+    function testNestedFrameInFrameset()
+    {
         $listener = $this->createListener();
         $listener->expectAt(0, 'startElement', array('frameset', array()));
         $listener->expectAt(1, 'startElement', array('frame', array('src' => 'frame.html')));
@@ -483,7 +529,8 @@ class TestOfHtmlSaxParser extends UnitTestCase {
         $listener->expectOnce('endElement', array('frameset'));
         $parser = new SimpleHtmlSaxParser($listener);
         $this->assertTrue($parser->parse(
-                '<frameset><frame src="frame.html"><noframes>Hello</noframes></frameset>'));
+            '<frameset><frame src="frame.html"><noframes>Hello</noframes></frameset>'));
     }
 }
+
 ?>

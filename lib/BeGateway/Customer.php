@@ -55,6 +55,14 @@ class Customer
     protected $_birth_date = NULL;
 
     /**
+     * @return string
+     */
+    public function getIp()
+    {
+        return $this->_ip;
+    }
+
+    /**
      * @param string $ip
      */
     public function setIp($ip)
@@ -63,11 +71,21 @@ class Customer
     }
 
     /**
+     * @param $resource
+     *
+     * @return mixed
+     */
+    private function _setNullIfEmpty(&$resource)
+    {
+        return (strlen($resource) > 0) ? $resource : null;
+    }
+
+    /**
      * @return string
      */
-    public function getIp()
+    public function getEmail()
     {
-        return $this->_ip;
+        return $this->_email;
     }
 
     /**
@@ -81,9 +99,9 @@ class Customer
     /**
      * @return string
      */
-    public function getEmail()
+    public function getFirstName()
     {
-        return $this->_email;
+        return $this->_first_name;
     }
 
     /**
@@ -97,9 +115,9 @@ class Customer
     /**
      * @return string
      */
-    public function getFirstName()
+    public function getLastName()
     {
-        return $this->_first_name;
+        return $this->_last_name;
     }
 
     /**
@@ -113,9 +131,9 @@ class Customer
     /**
      * @return string
      */
-    public function getLastName()
+    public function getAddress()
     {
-        return $this->_last_name;
+        return $this->_address;
     }
 
     /**
@@ -129,9 +147,9 @@ class Customer
     /**
      * @return string
      */
-    public function getAddress()
+    public function getCity()
     {
-        return $this->_address;
+        return $this->_city;
     }
 
     /**
@@ -145,9 +163,9 @@ class Customer
     /**
      * @return string
      */
-    public function getCity()
+    public function getCountry()
     {
-        return $this->_city;
+        return $this->_country;
     }
 
     /**
@@ -159,11 +177,11 @@ class Customer
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getCountry()
+    public function getState()
     {
-        return $this->_country;
+        return (in_array($this->_country, array('US', 'CA'))) ? $this->_state : null;
     }
 
     /**
@@ -175,11 +193,11 @@ class Customer
     }
 
     /**
-     * @return string|null
+     * @return string
      */
-    public function getState()
+    public function getZip()
     {
-        return (in_array($this->_country, array('US', 'CA'))) ? $this->_state : null;
+        return $this->_zip;
     }
 
     /**
@@ -193,9 +211,9 @@ class Customer
     /**
      * @return string
      */
-    public function getZip()
+    public function getPhone()
     {
-        return $this->_zip;
+        return $this->_phone;
     }
 
     /**
@@ -207,22 +225,6 @@ class Customer
     }
 
     /**
-     * @return string
-     */
-    public function getPhone()
-    {
-        return $this->_phone;
-    }
-
-    /**
-     * @param string $birthdate
-     */
-    public function setBirthDate($birthdate)
-    {
-        $this->_birth_date = $this->_setNullIfEmpty($birthdate);
-    }
-
-    /**
      * @return string|null
      */
     public function getBirthDate()
@@ -231,13 +233,11 @@ class Customer
     }
 
     /**
-     * @param $resource
-     *
-     * @return mixed
+     * @param string $birthdate
      */
-    private function _setNullIfEmpty(&$resource)
+    public function setBirthDate($birthdate)
     {
-        return (strlen($resource) > 0) ? $resource : null;
+        $this->_birth_date = $this->_setNullIfEmpty($birthdate);
     }
 }
 

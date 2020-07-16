@@ -18,19 +18,6 @@ class ResponseCheckout extends ResponseBase
     }
 
     /**
-     * @return bool
-     */
-    public function isError()
-    {
-        $error = parent::isError();
-        if (isset($this->getResponse()->checkout) && isset($this->getResponse()->checkout->status)) {
-            $error = $error || $this->getResponse()->checkout->status == 'error';
-        }
-
-        return $error;
-    }
-
-    /**
      * @return string
      */
     public function getMessage()
@@ -47,27 +34,16 @@ class ResponseCheckout extends ResponseBase
     }
 
     /**
-     * @return string
+     * @return bool
      */
-    public function getToken()
+    public function isError()
     {
-        return $this->getResponse()->checkout->token;
-    }
+        $error = parent::isError();
+        if (isset($this->getResponse()->checkout) && isset($this->getResponse()->checkout->status)) {
+            $error = $error || $this->getResponse()->checkout->status == 'error';
+        }
 
-    /**
-     * @return string
-     */
-    public function getRedirectUrl()
-    {
-        return $this->getResponse()->checkout->redirect_url;
-    }
-
-    /**
-     * @return string|string[]|null
-     */
-    public function getRedirectUrlScriptName()
-    {
-        return preg_replace('/(.+)\?token=(.+)/', '$1', $this->getRedirectUrl());
+        return $error;
     }
 
     /**
@@ -88,5 +64,29 @@ class ResponseCheckout extends ResponseBase
         }
 
         return $message;
+    }
+
+    /**
+     * @return string
+     */
+    public function getToken()
+    {
+        return $this->getResponse()->checkout->token;
+    }
+
+    /**
+     * @return string|string[]|null
+     */
+    public function getRedirectUrlScriptName()
+    {
+        return preg_replace('/(.+)\?token=(.+)/', '$1', $this->getRedirectUrl());
+    }
+
+    /**
+     * @return string
+     */
+    public function getRedirectUrl()
+    {
+        return $this->getResponse()->checkout->redirect_url;
     }
 }

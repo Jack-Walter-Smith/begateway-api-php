@@ -23,19 +23,19 @@ class QueryByTrackingId extends ApiAbstract
     }
 
     /**
-     * @param string $trackingId
-     */
-    public function setTrackingId($trackingId)
-    {
-        $this->_tracking_id = $trackingId;
-    }
-
-    /**
      * @return mixed
      */
     public function getTrackingId()
     {
         return $this->_tracking_id;
+    }
+
+    /**
+     * @param string $trackingId
+     */
+    public function setTrackingId($trackingId)
+    {
+        $this->_tracking_id = $trackingId;
     }
 
     /**

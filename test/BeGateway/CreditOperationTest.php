@@ -1,153 +1,157 @@
 <?php
+
 namespace BeGateway;
 
-class CreditOperationTest extends TestCase {
+class CreditOperationTest extends TestCase
+{
+    public function test_setDescription()
+    {
+        $auth = $this->getTestObjectInstance();
 
- public function test_setDescription() {
+        $description = 'Test description';
 
-    $auth = $this->getTestObjectInstance();
+        $auth->setDescription($description);
 
-    $description = 'Test description';
+        $this->assertEqual($auth->getDescription(), $description);
+    }
 
-    $auth->setDescription($description);
+    protected function getTestObjectInstance()
+    {
+        self::authorizeFromEnv();
 
-    $this->assertEqual($auth->getDescription(), $description);
-  }
+        return new CreditOperation();
+    }
 
-  public function test_setTrackingId() {
+    public function test_setTrackingId()
+    {
+        $auth = $this->getTestObjectInstance();
 
-    $auth = $this->getTestObjectInstance();
+        $tracking_id = 'Test tracking_id';
 
-    $tracking_id = 'Test tracking_id';
+        $auth->setTrackingId($tracking_id);
+        $this->assertEqual($auth->getTrackingId(), $tracking_id);
+    }
 
-    $auth->setTrackingId($tracking_id);
-    $this->assertEqual($auth->getTrackingId(), $tracking_id);
-  }
+    public function test_buildRequestMessage()
+    {
+        $transaction = $this->getTestObject();
+        $arr = array(
+            'request' => array(
+                'amount' => 1256,
+                'currency' => 'RUB',
+                'description' => 'description',
+                'tracking_id' => 'tracking',
+                'credit_card' => array(
+                    'token' => '12345',
+                ),
+            ),
+        );
 
-  public function test_buildRequestMessage() {
-    $transaction = $this->getTestObject();
-    $arr = array(
-      'request' => array(
-        'amount' => 1256,
-        'currency' => 'RUB',
-        'description' => 'description',
-        'tracking_id' => 'tracking',
-        'credit_card' => array(
-          'token' => '12345'
-        )
-      )
-    );
+        $reflection = new \ReflectionClass('BeGateway\CreditOperation');
+        $method = $reflection->getMethod('_buildRequestMessage');
+        $method->setAccessible(true);
 
-    $reflection = new \ReflectionClass( 'BeGateway\CreditOperation' );
-    $method = $reflection->getMethod('_buildRequestMessage');
-    $method->setAccessible(true);
+        $request = $method->invoke($transaction, '_buildRequestMessage');
 
-    $request = $method->invoke($transaction, '_buildRequestMessage');
+        $this->assertEqual($arr, $request);
+    }
 
-    $this->assertEqual($arr, $request);
-  }
+    protected function getTestObject()
+    {
+        $transaction = $this->getTestObjectInstance();
 
-  public function test_endpoint() {
+        $transaction->money->setAmount(12.56);
+        $transaction->money->setCurrency('RUB');
+        $transaction->card->setCardToken('12345');
+        $transaction->setDescription('description');
+        $transaction->setTrackingId('tracking');
 
-    $auth = $this->getTestObjectInstance();
+        return $transaction;
+    }
 
-    $reflection = new \ReflectionClass('BeGateway\CreditOperation');
-    $method = $reflection->getMethod('_endpoint');
-    $method->setAccessible(true);
-    $url = $method->invoke($auth, '_endpoint');
+    public function test_endpoint()
+    {
+        $auth = $this->getTestObjectInstance();
 
-    $this->assertEqual($url, Settings::$gatewayBase . '/transactions/credits');
+        $reflection = new \ReflectionClass('BeGateway\CreditOperation');
+        $method = $reflection->getMethod('_endpoint');
+        $method->setAccessible(true);
+        $url = $method->invoke($auth, '_endpoint');
 
-  }
+        $this->assertEqual($url, Settings::$gatewayBase . '/transactions/credits');
+    }
 
-  public function test_successCreditRequest() {
+    public function test_successCreditRequest()
+    {
+        $amount = rand(0, 10000);
 
-    $amount = rand(0,10000);
+        $parent = $this->runParentTransaction($amount);
 
-    $parent = $this->runParentTransaction($amount);
+        $transaction = $this->getTestObjectInstance();
 
-    $transaction = $this->getTestObjectInstance();
+        $transaction->money->setAmount($amount * 2);
+        $transaction->money->setCurrency('EUR');
+        $transaction->setDescription('test description');
+        $transaction->setTrackingId('tracking_id');
+        $transaction->card->setCardToken($parent->getResponse()->transaction->credit_card->token);
 
-    $transaction->money->setAmount($amount * 2);
-    $transaction->money->setCurrency('EUR');
-    $transaction->setDescription('test description');
-    $transaction->setTrackingId('tracking_id');
-    $transaction->card->setCardToken($parent->getResponse()->transaction->credit_card->token);
+        $t_response = $transaction->submit();
 
-    $t_response = $transaction->submit();
+        $this->assertTrue($t_response->isValid());
+        $this->assertTrue($t_response->isSuccess());
+        $this->assertNotNull($t_response->getUid());
+        $this->assertEqual($t_response->getMessage(), 'Successfully processed');
+    }
 
-    $this->assertTrue($t_response->isValid());
-    $this->assertTrue($t_response->isSuccess());
-    $this->assertNotNull($t_response->getUid());
-    $this->assertEqual($t_response->getMessage(),'Successfully processed');
+    protected function runParentTransaction($amount = 10.00)
+    {
+        self::authorizeFromEnv();
 
-  }
+        $transaction = new PaymentOperation();
 
-  public function test_errorCreditRequest() {
-    $amount = rand(0,10000);
+        $transaction->money->setAmount($amount);
+        $transaction->money->setCurrency('EUR');
+        $transaction->setDescription('test');
+        $transaction->setTrackingId('my_custom_variable');
 
-    $parent = $this->runParentTransaction($amount);
+        $transaction->card->setCardNumber('4200000000000000');
+        $transaction->card->setCardHolder('John Doe');
+        $transaction->card->setCardExpMonth(1);
+        $transaction->card->setCardExpYear(2030);
+        $transaction->card->setCardCvc('123');
 
-    $transaction = $this->getTestObjectInstance();
+        $transaction->customer->setFirstName('John');
+        $transaction->customer->setLastName('Doe');
+        $transaction->customer->setCountry('LV');
+        $transaction->customer->setAddress('Demo str 12');
+        $transaction->customer->setCity('Riga');
+        $transaction->customer->setZip('LV-1082');
+        $transaction->customer->setIp('127.0.0.1');
+        $transaction->customer->setEmail('john@example.com');
 
-    $transaction->money->setAmount($amount * 2);
-    $transaction->money->setCurrency('EUR');
-    $transaction->setDescription('test description');
-    $transaction->setTrackingId('tracking_id');
-    $transaction->card->setCardToken('12345');
+        return $transaction->submit();
+    }
 
-    $t_response = $transaction->submit();
+    public function test_errorCreditRequest()
+    {
+        $amount = rand(0, 10000);
 
-    $this->assertTrue($t_response->isValid());
-    $this->assertTrue($t_response->isError());
-    $this->assertPattern('|Token does not exist.|', $t_response->getMessage());
-  }
+        $parent = $this->runParentTransaction($amount);
 
-  protected function runParentTransaction($amount = 10.00 ) {
-    self::authorizeFromEnv();
+        $transaction = $this->getTestObjectInstance();
 
-    $transaction = new PaymentOperation();
+        $transaction->money->setAmount($amount * 2);
+        $transaction->money->setCurrency('EUR');
+        $transaction->setDescription('test description');
+        $transaction->setTrackingId('tracking_id');
+        $transaction->card->setCardToken('12345');
 
-    $transaction->money->setAmount($amount);
-    $transaction->money->setCurrency('EUR');
-    $transaction->setDescription('test');
-    $transaction->setTrackingId('my_custom_variable');
+        $t_response = $transaction->submit();
 
-    $transaction->card->setCardNumber('4200000000000000');
-    $transaction->card->setCardHolder('John Doe');
-    $transaction->card->setCardExpMonth(1);
-    $transaction->card->setCardExpYear(2030);
-    $transaction->card->setCardCvc('123');
-
-    $transaction->customer->setFirstName('John');
-    $transaction->customer->setLastName('Doe');
-    $transaction->customer->setCountry('LV');
-    $transaction->customer->setAddress('Demo str 12');
-    $transaction->customer->setCity('Riga');
-    $transaction->customer->setZip('LV-1082');
-    $transaction->customer->setIp('127.0.0.1');
-    $transaction->customer->setEmail('john@example.com');
-
-    return $transaction->submit();
-  }
-
-  protected function getTestObject() {
-    $transaction = $this->getTestObjectInstance();
-
-    $transaction->money->setAmount(12.56);
-    $transaction->money->setCurrency('RUB');
-    $transaction->card->setCardToken('12345');
-    $transaction->setDescription('description');
-    $transaction->setTrackingId('tracking');
-
-    return $transaction;
-
-  }
-
-  protected function getTestObjectInstance() {
-    self::authorizeFromEnv();
-
-    return new CreditOperation();
-  }
+        $this->assertTrue($t_response->isValid());
+        $this->assertTrue($t_response->isError());
+        $this->assertPattern('|Token does not exist.|', $t_response->getMessage());
+    }
 }
+
 ?>

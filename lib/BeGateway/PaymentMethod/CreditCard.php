@@ -1,5 +1,7 @@
 <?php
+
 namespace BeGateway\PaymentMethod;
 
-class CreditCard extends Base {
+class CreditCard extends Base
+{
 }

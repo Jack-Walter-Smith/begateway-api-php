@@ -1,4 +1,5 @@
 <?php
+
 // $Id: test.php 1748 2008-04-14 01:50:41Z lastcraft $
 require_once dirname(__FILE__) . '/../../autorun.php';
 require_once dirname(__FILE__) . '/../testdox.php';
@@ -8,13 +9,15 @@ require_once dirname(__FILE__) . '/../testdox.php';
 
 class TestOfTestDoxReporter extends UnitTestCase
 {
-    function testIsAnInstanceOfSimpleScorerAndReporter() {
+    function testIsAnInstanceOfSimpleScorerAndReporter()
+    {
         $dox = new TestDoxReporter();
         $this->assertIsA($dox, 'SimpleScorer');
         $this->assertIsA($dox, 'SimpleReporter');
     }
 
-    function testOutputsNameOfTestCase() {
+    function testOutputsNameOfTestCase()
+    {
         $dox = new TestDoxReporter();
         ob_start();
         $dox->paintCaseStart('TestOfTestDoxReporter');
@@ -22,7 +25,8 @@ class TestOfTestDoxReporter extends UnitTestCase
         $this->assertPattern('/^TestDoxReporter/', $buffer);
     }
 
-    function testOutputOfTestCaseNameFilteredByConstructParameter() {
+    function testOutputOfTestCaseNameFilteredByConstructParameter()
+    {
         $dox = new TestDoxReporter('/^(.*)Test$/');
         ob_start();
         $dox->paintCaseStart('SomeGreatWidgetTest');
@@ -30,7 +34,8 @@ class TestOfTestDoxReporter extends UnitTestCase
         $this->assertPattern('/^SomeGreatWidget/', $buffer);
     }
 
-    function testIfTest_case_patternIsEmptyAssumeEverythingMatches() {
+    function testIfTest_case_patternIsEmptyAssumeEverythingMatches()
+    {
         $dox = new TestDoxReporter('');
         ob_start();
         $dox->paintCaseStart('TestOfTestDoxReporter');
@@ -38,7 +43,8 @@ class TestOfTestDoxReporter extends UnitTestCase
         $this->assertPattern('/^TestOfTestDoxReporter/', $buffer);
     }
 
-    function testEmptyLineInsertedWhenCaseEnds() {
+    function testEmptyLineInsertedWhenCaseEnds()
+    {
         $dox = new TestDoxReporter();
         ob_start();
         $dox->paintCaseEnd('TestOfTestDoxReporter');
@@ -46,7 +52,8 @@ class TestOfTestDoxReporter extends UnitTestCase
         $this->assertEqual("\n", $buffer);
     }
 
-    function testPaintsTestMethodInTestDoxFormat() {
+    function testPaintsTestMethodInTestDoxFormat()
+    {
         $dox = new TestDoxReporter();
         ob_start();
         $dox->paintMethodStart('testSomeGreatTestCase');
@@ -61,7 +68,8 @@ class TestOfTestDoxReporter extends UnitTestCase
         $this->assertEqual("- random number is {$random}", $buffer);
     }
 
-    function testDoesNotOutputAnythingOnNoneTestMethods() {
+    function testDoesNotOutputAnythingOnNoneTestMethods()
+    {
         $dox = new TestDoxReporter();
         ob_start();
         $dox->paintMethodStart('nonMatchingMethod');
@@ -69,7 +77,8 @@ class TestOfTestDoxReporter extends UnitTestCase
         $this->assertEqual('', $buffer);
     }
 
-    function testPaintMethodAddLineBreak() {
+    function testPaintMethodAddLineBreak()
+    {
         $dox = new TestDoxReporter();
         ob_start();
         $dox->paintMethodEnd('someMethod');
@@ -77,7 +86,8 @@ class TestOfTestDoxReporter extends UnitTestCase
         $this->assertEqual("\n", $buffer);
     }
 
-    function testProperlySpacesSingleLettersInMethodName() {
+    function testProperlySpacesSingleLettersInMethodName()
+    {
         $dox = new TestDoxReporter();
         ob_start();
         $dox->paintMethodStart('testAVerySimpleAgainAVerySimpleMethod');
@@ -85,7 +95,8 @@ class TestOfTestDoxReporter extends UnitTestCase
         $this->assertEqual('- a very simple again a very simple method', $buffer);
     }
 
-    function testOnFailureThisPrintsFailureNotice() {
+    function testOnFailureThisPrintsFailureNotice()
+    {
         $dox = new TestDoxReporter();
         ob_start();
         $dox->paintFail('');
@@ -93,7 +104,8 @@ class TestOfTestDoxReporter extends UnitTestCase
         $this->assertEqual(' [FAILED]', $buffer);
     }
 
-    function testWhenMatchingMethodNamesTestPrefixIsCaseInsensitive() {
+    function testWhenMatchingMethodNamesTestPrefixIsCaseInsensitive()
+    {
         $dox = new TestDoxReporter();
         ob_start();
         $dox->paintMethodStart('TESTSupportsAllUppercaseTestPrefixEvenThoughIDoNotKnowWhyYouWouldDoThat');
@@ -104,4 +116,5 @@ class TestOfTestDoxReporter extends UnitTestCase
         );
     }
 }
+
 ?>

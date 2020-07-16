@@ -2,6 +2,8 @@
 
 namespace BeGateway;
 
+use Exception;
+
 /**
  * Class ApiAbstract
  *
@@ -9,11 +11,6 @@ namespace BeGateway;
  */
 abstract class ApiAbstract
 {
-    /**
-     * @return mixed
-     */
-    protected abstract function _buildRequestMessage();
-
     /**
      * @var
      */
@@ -34,7 +31,7 @@ abstract class ApiAbstract
     {
         try {
             $response = $this->_remoteRequest();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $msg = $e->getMessage();
             $response = json_encode(array(
                 'errors' => $msg,
@@ -77,6 +74,19 @@ abstract class ApiAbstract
     }
 
     /**
+     * @return mixed
+     */
+    protected abstract function _buildRequestMessage();
+
+    /**
+     * @return mixed
+     */
+    public function getLanguage()
+    {
+        return $this->_language;
+    }
+
+    /**
      * @param string $language_code
      */
     public function setLanguage($language_code)
@@ -86,14 +96,6 @@ abstract class ApiAbstract
         } else {
             $this->_language = Language::getDefaultLanguage();
         }
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getLanguage()
-    {
-        return $this->_language;
     }
 
     /**
@@ -112,5 +114,3 @@ abstract class ApiAbstract
         $this->_timeout_read = $timeout;
     }
 }
-
-

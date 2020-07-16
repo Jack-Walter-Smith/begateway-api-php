@@ -2,6 +2,8 @@
 
 namespace BeGateway;
 
+use Exception;
+
 /**
  * Class Logger
  *
@@ -26,13 +28,13 @@ class Logger
      */
     const DEBUG = 4;
     /**
-     * @var int
-     */
-    private $_level;
-    /**
      * @var
      */
     private static $instance;
+    /**
+     * @var int
+     */
+    private $_level;
     /**
      * @var string
      */
@@ -52,6 +54,18 @@ class Logger
     private function __construct()
     {
         $this->_level = self::INFO;
+    }
+
+    /**
+     * @return \BeGateway\Logger
+     */
+    public static function getInstance()
+    {
+        if (!self::$instance) {
+            self::$instance = new self();
+        }
+
+        return self::$instance;
     }
 
     /**
@@ -79,6 +93,57 @@ class Logger
                 call_user_func($this->_message_callback, $message);
             }
         }
+    }
+
+    /**
+     * @param int $level
+     *
+     * @return string
+     * @throws \Exception
+     */
+    public static function getLevelName($level)
+    {
+        switch ($level) {
+            case self::INFO :
+                return 'INFO';
+                break;
+            case self::WARNING :
+                return 'WARNING';
+                break;
+            case self::DEBUG :
+                return 'DEBUG';
+                break;
+            default:
+                throw new Exception('Unknown log level ' . $level);
+        }
+    }
+
+    /**
+     * @param string $message
+     *
+     * @return string|string[]|null
+     */
+    private function filter($message)
+    {
+        $card_filter = '/("number":")(\d{1})\d{8,13}(\d{4})(")/';
+        $cvc_filter = '/("verification_value":")(\d{3,4})(")/';
+        $modified = $message;
+        if ($this->_mask) {
+            $modified = preg_replace($card_filter, '$1$2 xxxx $3$4', $modified);
+            $modified = preg_replace($cvc_filter, '$1xxx$3', $modified);
+        }
+
+        return $modified;
+    }
+
+    /**
+     * @param string $message
+     */
+    private function sendToFile($message)
+    {
+        $fh = fopen($this->_output, 'w+');
+        fwrite($fh, $message);
+        fclose($fh);
     }
 
     /**
@@ -112,69 +177,4 @@ class Logger
     {
         $this->_output = $path;
     }
-
-    /**
-     * @param int $level
-     *
-     * @return string
-     * @throws \Exception
-     */
-    public static function getLevelName($level)
-    {
-        switch ($level) {
-            case self::INFO :
-                return 'INFO';
-                break;
-            case self::WARNING :
-                return 'WARNING';
-                break;
-            case self::DEBUG :
-                return 'DEBUG';
-                break;
-            default:
-                throw new \Exception('Unknown log level ' . $level);
-        }
-    }
-
-    /**
-     * @return \BeGateway\Logger
-     */
-    public static function getInstance()
-    {
-        if (!self::$instance) {
-            self::$instance = new self();
-        }
-
-        return self::$instance;
-    }
-
-    /**
-     * @param string $message
-     */
-    private function sendToFile($message)
-    {
-        $fh = fopen($this->_output, 'w+');
-        fwrite($fh, $message);
-        fclose($fh);
-    }
-
-    /**
-     * @param string $message
-     *
-     * @return string|string[]|null
-     */
-    private function filter($message)
-    {
-        $card_filter = '/("number":")(\d{1})\d{8,13}(\d{4})(")/';
-        $cvc_filter = '/("verification_value":")(\d{3,4})(")/';
-        $modified = $message;
-        if ($this->_mask) {
-            $modified = preg_replace($card_filter, '$1$2 xxxx $3$4', $modified);
-            $modified = preg_replace($cvc_filter, '$1xxx$3', $modified);
-        }
-
-        return $modified;
-    }
 }
-
-?>

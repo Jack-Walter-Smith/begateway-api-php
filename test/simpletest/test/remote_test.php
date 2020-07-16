@@ -1,4 +1,5 @@
 <?php
+
 // $Id: remote_test.php 1759 2008-04-15 02:37:07Z edwardzyang $
 require_once('../remote.php');
 require_once('../reporter.php');
@@ -7,7 +8,7 @@ require_once('../reporter.php');
 if (isset($_SERVER['SCRIPT_URI'])) {
     $base_uri = $_SERVER['SCRIPT_URI'];
 } elseif (isset($_SERVER['HTTP_HOST']) && isset($_SERVER['PHP_SELF'])) {
-    $base_uri = 'http://'. $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
+    $base_uri = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
 };
 $test_url = str_replace('remote_test.php', 'visual_test.php', $base_uri);
 

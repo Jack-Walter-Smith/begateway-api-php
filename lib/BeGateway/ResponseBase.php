@@ -52,19 +52,19 @@ abstract class ResponseBase
     }
 
     /**
-     * @return bool
-     */
-    public function isValid()
-    {
-        return !($this->_response === false || $this->_response == null);
-    }
-
-    /**
      * @return mixed
      */
     public function getResponse()
     {
         return $this->_response;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isValid()
+    {
+        return !($this->_response === false || $this->_response == null);
     }
 
     /**

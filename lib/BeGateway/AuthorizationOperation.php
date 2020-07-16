@@ -60,123 +60,6 @@ class AuthorizationOperation extends ApiAbstract
     }
 
     /**
-     * @param string $description
-     */
-    public function setDescription($description)
-    {
-        $this->_description = $description;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getDescription()
-    {
-        return $this->_description;
-    }
-
-    /**
-     * @param string $tracking_id
-     */
-    public function setTrackingId($tracking_id)
-    {
-        $this->_tracking_id = $tracking_id;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getTrackingId()
-    {
-        return $this->_tracking_id;
-    }
-
-    /**
-     * @param string $notification_url
-     */
-    public function setNotificationUrl($notification_url)
-    {
-        $this->_notification_url = $notification_url;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getNotificationUrl()
-    {
-        return $this->_notification_url;
-    }
-
-    /**
-     * @param string $return_url
-     */
-    public function setReturnUrl($return_url)
-    {
-        $this->_return_url = $return_url;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getReturnUrl()
-    {
-        return $this->_return_url;
-    }
-
-    /**
-     * @param bool $mode
-     */
-    public function setTestMode($mode = true)
-    {
-        $this->_test_mode = $mode;
-    }
-
-    /**
-     * @return bool
-     */
-    public function getTestMode()
-    {
-        return $this->_test_mode;
-    }
-
-    /**
-     * @return array
-     */
-    protected function _buildCard()
-    {
-        $encrypted_card = array();
-        $card = array(
-            'number' => $this->card->getCardNumber(),
-            'verification_value' => $this->card->getCardCvc(),
-            'holder' => $this->card->getCardHolder(),
-            'exp_month' => $this->card->getCardExpMonth(),
-            'exp_year' => $this->card->getCardExpYear(),
-            'token' => $this->card->getCardToken(),
-            'skip_three_d_secure_verification' => $this->card->getSkipThreeDSecure(),
-        );
-
-        $card = array_filter($card);
-
-        foreach ($card as $k => $v) {
-            if (strpos($v, '$begatewaycse') !== false) {
-                $encrypted_card[$k] = $v;
-                unset($card[$k]);
-            }
-        }
-
-        $response = array();
-
-        if (count($card) > 0) {
-            $response['credit_card'] = $card;
-        }
-        if (count($encrypted_card) > 0) {
-            $response['encrypted_credit_card'] = $encrypted_card;
-        }
-
-        return $response;
-    }
-
-    /**
      * @return array[]|mixed
      */
     protected function _buildRequestMessage()
@@ -219,5 +102,122 @@ class AuthorizationOperation extends ApiAbstract
         Logger::getInstance()->write($request, Logger::DEBUG, get_class() . '::' . __FUNCTION__);
 
         return $request;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDescription()
+    {
+        return $this->_description;
+    }
+
+    /**
+     * @param string $description
+     */
+    public function setDescription($description)
+    {
+        $this->_description = $description;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTrackingId()
+    {
+        return $this->_tracking_id;
+    }
+
+    /**
+     * @param string $tracking_id
+     */
+    public function setTrackingId($tracking_id)
+    {
+        $this->_tracking_id = $tracking_id;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getNotificationUrl()
+    {
+        return $this->_notification_url;
+    }
+
+    /**
+     * @param string $notification_url
+     */
+    public function setNotificationUrl($notification_url)
+    {
+        $this->_notification_url = $notification_url;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getReturnUrl()
+    {
+        return $this->_return_url;
+    }
+
+    /**
+     * @param string $return_url
+     */
+    public function setReturnUrl($return_url)
+    {
+        $this->_return_url = $return_url;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getTestMode()
+    {
+        return $this->_test_mode;
+    }
+
+    /**
+     * @param bool $mode
+     */
+    public function setTestMode($mode = true)
+    {
+        $this->_test_mode = $mode;
+    }
+
+    /**
+     * @return array
+     */
+    protected function _buildCard()
+    {
+        $encrypted_card = array();
+        $card = array(
+            'number' => $this->card->getCardNumber(),
+            'verification_value' => $this->card->getCardCvc(),
+            'holder' => $this->card->getCardHolder(),
+            'exp_month' => $this->card->getCardExpMonth(),
+            'exp_year' => $this->card->getCardExpYear(),
+            'token' => $this->card->getCardToken(),
+            'skip_three_d_secure_verification' => $this->card->getSkipThreeDSecure(),
+        );
+
+        $card = array_filter($card);
+
+        foreach ($card as $k => $v) {
+            if (strpos($v, '$begatewaycse') !== false) {
+                $encrypted_card[$k] = $v;
+                unset($card[$k]);
+            }
+        }
+
+        $response = array();
+
+        if (count($card) > 0) {
+            $response['credit_card'] = $card;
+        }
+        if (count($encrypted_card) > 0) {
+            $response['encrypted_credit_card'] = $encrypted_card;
+        }
+
+        return $response;
     }
 }

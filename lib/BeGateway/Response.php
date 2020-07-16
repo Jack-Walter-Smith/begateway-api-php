@@ -18,6 +18,28 @@ class Response extends ResponseBase
     }
 
     /**
+     * @return bool|string
+     */
+    public function getStatus()
+    {
+        if ($this->hasTransactionSection()) {
+            return $this->getResponse()->transaction->status;
+        } elseif ($this->isError()) {
+            return 'error';
+        }
+
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasTransactionSection()
+    {
+        return (is_object($this->getResponse()) && isset($this->getResponse()->transaction));
+    }
+
+    /**
      * @return bool
      */
     public function isFailed()
@@ -48,20 +70,6 @@ class Response extends ResponseBase
     {
         if ($this->hasTransactionSection()) {
             return $this->getResponse()->transaction->test == true;
-        }
-
-        return false;
-    }
-
-    /**
-     * @return bool|string
-     */
-    public function getStatus()
-    {
-        if ($this->hasTransactionSection()) {
-            return $this->getResponse()->transaction->status;
-        } elseif ($this->isError()) {
-            return 'error';
         }
 
         return false;
@@ -101,14 +109,6 @@ class Response extends ResponseBase
         } else {
             return false;
         }
-    }
-
-    /**
-     * @return bool
-     */
-    public function hasTransactionSection()
-    {
-        return (is_object($this->getResponse()) && isset($this->getResponse()->transaction));
     }
 
     /**

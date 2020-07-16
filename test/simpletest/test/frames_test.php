@@ -1,4 +1,5 @@
 <?php
+
 // $Id: frames_test.php 1899 2009-07-28 19:33:42Z lastcraft $
 require_once(dirname(__FILE__) . '/../autorun.php');
 require_once(dirname(__FILE__) . '/../tag.php');
@@ -7,16 +8,18 @@ require_once(dirname(__FILE__) . '/../frames.php');
 Mock::generate('SimplePage');
 Mock::generate('SimpleForm');
 
-class TestOfFrameset extends UnitTestCase {
-
-    function testTitleReadFromFramesetPage() {
+class TestOfFrameset extends UnitTestCase
+{
+    function testTitleReadFromFramesetPage()
+    {
         $page = new MockSimplePage();
         $page->setReturnValue('getTitle', 'This page');
         $frameset = new SimpleFrameset($page);
         $this->assertEqual($frameset->getTitle(), 'This page');
     }
 
-    function TestHeadersReadFromFramesetByDefault() {
+    function TestHeadersReadFromFramesetByDefault()
+    {
         $page = new MockSimplePage();
         $page->setReturnValue('getHeaders', 'Header: content');
         $page->setReturnValue('getMimeType', 'text/xml');
@@ -35,14 +38,16 @@ class TestOfFrameset extends UnitTestCase {
         $this->assertIdentical($frameset->getRealm(), 'Safe place');
     }
 
-    function testEmptyFramesetHasNoContent() {
+    function testEmptyFramesetHasNoContent()
+    {
         $page = new MockSimplePage();
         $page->setReturnValue('getRaw', 'This content');
         $frameset = new SimpleFrameset($page);
         $this->assertEqual($frameset->getRaw(), '');
     }
 
-    function testRawContentIsFromOnlyFrame() {
+    function testRawContentIsFromOnlyFrame()
+    {
         $page = new MockSimplePage();
         $page->expectNever('getRaw');
 
@@ -54,7 +59,8 @@ class TestOfFrameset extends UnitTestCase {
         $this->assertEqual($frameset->getRaw(), 'Stuff');
     }
 
-    function testRawContentIsFromAllFrames() {
+    function testRawContentIsFromAllFrames()
+    {
         $page = new MockSimplePage();
         $page->expectNever('getRaw');
 
@@ -70,7 +76,8 @@ class TestOfFrameset extends UnitTestCase {
         $this->assertEqual($frameset->getRaw(), 'Stuff1Stuff2');
     }
 
-    function testTextContentIsFromOnlyFrame() {
+    function testTextContentIsFromOnlyFrame()
+    {
         $page = new MockSimplePage();
         $page->expectNever('getText');
 
@@ -82,7 +89,8 @@ class TestOfFrameset extends UnitTestCase {
         $this->assertEqual($frameset->getText(), 'Stuff');
     }
 
-    function testTextContentIsFromAllFrames() {
+    function testTextContentIsFromAllFrames()
+    {
         $page = new MockSimplePage();
         $page->expectNever('getText');
 
@@ -98,7 +106,8 @@ class TestOfFrameset extends UnitTestCase {
         $this->assertEqual($frameset->getText(), 'Stuff1 Stuff2');
     }
 
-    function testFieldFoundIsFirstInFramelist() {
+    function testFieldFoundIsFirstInFramelist()
+    {
         $frame1 = new MockSimplePage();
         $frame1->setReturnValue('getField', null);
         $frame1->expectOnce('getField', array(new SimpleByName('a')));
@@ -118,7 +127,8 @@ class TestOfFrameset extends UnitTestCase {
         $this->assertIdentical($frameset->getField(new SimpleByName('a')), 'A');
     }
 
-    function testFrameReplacementByIndex() {
+    function testFrameReplacementByIndex()
+    {
         $page = new MockSimplePage();
         $page->expectNever('getRaw');
 
@@ -134,7 +144,8 @@ class TestOfFrameset extends UnitTestCase {
         $this->assertEqual($frameset->getRaw(), 'Stuff2');
     }
 
-    function testFrameReplacementByName() {
+    function testFrameReplacementByName()
+    {
         $page = new MockSimplePage();
         $page->expectNever('getRaw');
 
@@ -151,16 +162,18 @@ class TestOfFrameset extends UnitTestCase {
     }
 }
 
-class TestOfFrameNavigation extends UnitTestCase {
-
-    function testStartsWithoutFrameFocus() {
+class TestOfFrameNavigation extends UnitTestCase
+{
+    function testStartsWithoutFrameFocus()
+    {
         $page = new MockSimplePage();
         $frameset = new SimpleFrameset($page);
         $frameset->addFrame(new MockSimplePage());
         $this->assertFalse($frameset->getFrameFocus());
     }
 
-    function testCanFocusOnSingleFrame() {
+    function testCanFocusOnSingleFrame()
+    {
         $page = new MockSimplePage();
         $page->expectNever('getRaw');
 
@@ -178,7 +191,8 @@ class TestOfFrameNavigation extends UnitTestCase {
         $this->assertIdentical($frameset->getFrameFocus(), array(1));
     }
 
-    function testContentComesFromFrameInFocus() {
+    function testContentComesFromFrameInFocus()
+    {
         $page = new MockSimplePage();
 
         $frame1 = new MockSimplePage();
@@ -208,7 +222,8 @@ class TestOfFrameNavigation extends UnitTestCase {
         $this->assertEqual($frameset->getRaw(), 'Stuff1Stuff2');
     }
 
-    function testCanFocusByName() {
+    function testCanFocusByName()
+    {
         $page = new MockSimplePage();
 
         $frame1 = new MockSimplePage();
@@ -238,23 +253,20 @@ class TestOfFrameNavigation extends UnitTestCase {
     }
 }
 
-class TestOfFramesetPageInterface extends UnitTestCase {
+class TestOfFramesetPageInterface extends UnitTestCase
+{
     private $page_interface;
     private $frameset_interface;
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
         $this->page_interface = $this->getPageMethods();
         $this->frameset_interface = $this->getFramesetMethods();
     }
 
-    function assertListInAnyOrder($list, $expected) {
-        sort($list);
-        sort($expected);
-        $this->assertEqual($list, $expected);
-    }
-
-    private function getPageMethods() {
+    private function getPageMethods()
+    {
         $methods = array();
         foreach (get_class_methods('SimplePage') as $method) {
             if (strtolower($method) == strtolower('SimplePage')) {
@@ -271,10 +283,12 @@ class TestOfFramesetPageInterface extends UnitTestCase {
             }
             $methods[] = $method;
         }
+
         return $methods;
     }
 
-    private function getFramesetMethods() {
+    private function getFramesetMethods()
+    {
         $methods = array();
         foreach (get_class_methods('SimpleFrameset') as $method) {
             if (strtolower($method) == strtolower('SimpleFrameset')) {
@@ -288,21 +302,25 @@ class TestOfFramesetPageInterface extends UnitTestCase {
             }
             $methods[] = $method;
         }
+
         return $methods;
     }
 
-    function testFramsetHasPageInterface() {
+    function testFramsetHasPageInterface()
+    {
         $difference = array();
         foreach ($this->page_interface as $method) {
-            if (! in_array($method, $this->frameset_interface)) {
+            if (!in_array($method, $this->frameset_interface)) {
                 $this->fail("No [$method] in Frameset class");
+
                 return;
             }
         }
         $this->pass('Frameset covers Page interface');
     }
 
-    function testHeadersReadFromFrameIfInFocus() {
+    function testHeadersReadFromFrameIfInFocus()
+    {
         $frame = new MockSimplePage();
         $frame->setReturnValue('getUrl', new SimpleUrl('http://localhost/stuff'));
 
@@ -335,40 +353,49 @@ class TestOfFramesetPageInterface extends UnitTestCase {
         $this->assertIdentical($frameset->getRealm(), 'Safe place');
     }
 
-    function testUrlsComeFromBothFrames() {
+    function testUrlsComeFromBothFrames()
+    {
         $page = new MockSimplePage();
         $page->expectNever('getUrls');
 
         $frame1 = new MockSimplePage();
         $frame1->setReturnValue(
-                'getUrls',
-                array('http://www.lastcraft.com/', 'http://myserver/'));
+            'getUrls',
+            array('http://www.lastcraft.com/', 'http://myserver/'));
 
         $frame2 = new MockSimplePage();
         $frame2->setReturnValue(
-                'getUrls',
-                array('http://www.lastcraft.com/', 'http://test/'));
+            'getUrls',
+            array('http://www.lastcraft.com/', 'http://test/'));
 
         $frameset = new SimpleFrameset($page);
         $frameset->addFrame($frame1);
         $frameset->addFrame($frame2);
         $this->assertListInAnyOrder(
-                $frameset->getUrls(),
-                array('http://www.lastcraft.com/', 'http://myserver/', 'http://test/'));
+            $frameset->getUrls(),
+            array('http://www.lastcraft.com/', 'http://myserver/', 'http://test/'));
     }
 
-    function testLabelledUrlsComeFromBothFrames() {
+    function assertListInAnyOrder($list, $expected)
+    {
+        sort($list);
+        sort($expected);
+        $this->assertEqual($list, $expected);
+    }
+
+    function testLabelledUrlsComeFromBothFrames()
+    {
         $frame1 = new MockSimplePage();
         $frame1->setReturnValue(
-                'getUrlsByLabel',
-                array(new SimpleUrl('goodbye.php')),
-                array('a'));
+            'getUrlsByLabel',
+            array(new SimpleUrl('goodbye.php')),
+            array('a'));
 
         $frame2 = new MockSimplePage();
         $frame2->setReturnValue(
-                'getUrlsByLabel',
-                array(new SimpleUrl('hello.php')),
-                array('a'));
+            'getUrlsByLabel',
+            array(new SimpleUrl('hello.php')),
+            array('a'));
 
         $frameset = new SimpleFrameset(new MockSimplePage());
         $frameset->addFrame($frame1);
@@ -379,11 +406,12 @@ class TestOfFramesetPageInterface extends UnitTestCase {
         $expected2 = new SimpleUrl('hello.php');
         $expected2->setTarget('Two');
         $this->assertEqual(
-                $frameset->getUrlsByLabel('a'),
-                array($expected1, $expected2));
+            $frameset->getUrlsByLabel('a'),
+            array($expected1, $expected2));
     }
 
-    function testUrlByIdComesFromFirstFrameToRespond() {
+    function testUrlByIdComesFromFirstFrameToRespond()
+    {
         $frame1 = new MockSimplePage();
         $frame1->setReturnValue('getUrlById', new SimpleUrl('four.php'), array(4));
         $frame1->setReturnValue('getUrlById', false, array(5));
@@ -404,7 +432,8 @@ class TestOfFramesetPageInterface extends UnitTestCase {
         $this->assertEqual($frameset->getUrlById(5), $five);
     }
 
-    function testReadUrlsFromFrameInFocus() {
+    function testReadUrlsFromFrameInFocus()
+    {
         $frame1 = new MockSimplePage();
         $frame1->setReturnValue('getUrls', array('a'));
         $frame1->setReturnValue('getUrlsByLabel', array(new SimpleUrl('l')));
@@ -429,7 +458,8 @@ class TestOfFramesetPageInterface extends UnitTestCase {
         $this->assertIdentical($frameset->getUrlById(99), $expected);
     }
 
-    function testReadFrameTaggedUrlsFromFrameInFocus() {
+    function testReadFrameTaggedUrlsFromFrameInFocus()
+    {
         $frame = new MockSimplePage();
 
         $by_label = new SimpleUrl('l');
@@ -448,7 +478,8 @@ class TestOfFramesetPageInterface extends UnitTestCase {
         $this->assertIdentical($frameset->getUrlById(99), $by_id);
     }
 
-    function testFindingFormsById() {
+    function testFindingFormsById()
+    {
         $frame = new MockSimplePage();
         $form = new MockSimpleForm();
         $frame->returns('getFormById', $form, array('a'));
@@ -465,13 +496,14 @@ class TestOfFramesetPageInterface extends UnitTestCase {
         $this->assertSame($frameset->getFormById('a'), $form);
     }
 
-    function testFindingFormsBySubmit() {
+    function testFindingFormsBySubmit()
+    {
         $frame = new MockSimplePage();
         $form = new MockSimpleForm();
         $frame->returns(
-                'getFormBySubmit',
-                $form,
-                array(new SimpleByLabel('a')));
+            'getFormBySubmit',
+            $form,
+            array(new SimpleByLabel('a')));
 
         $frameset = new SimpleFrameset(new MockSimplePage());
         $frameset->addFrame(new MockSimplePage(), 'A');
@@ -485,13 +517,14 @@ class TestOfFramesetPageInterface extends UnitTestCase {
         $this->assertSame($frameset->getFormBySubmit(new SimpleByLabel('a')), $form);
     }
 
-    function testFindingFormsByImage() {
+    function testFindingFormsByImage()
+    {
         $frame = new MockSimplePage();
         $form = new MockSimpleForm();
         $frame->returns(
-                'getFormByImage',
-                $form,
-                array(new SimpleByLabel('a')));
+            'getFormByImage',
+            $form,
+            array(new SimpleByLabel('a')));
 
         $frameset = new SimpleFrameset(new MockSimplePage());
         $frameset->addFrame(new MockSimplePage(), 'A');
@@ -505,7 +538,8 @@ class TestOfFramesetPageInterface extends UnitTestCase {
         $this->assertSame($frameset->getFormByImage(new SimpleByLabel('a')), $form);
     }
 
-    function testSettingAllFrameFieldsWhenNoFrameFocus() {
+    function testSettingAllFrameFieldsWhenNoFrameFocus()
+    {
         $frame1 = new MockSimplePage();
         $frame1->expectOnce('setField', array(new SimpleById(22), 'A'));
 
@@ -518,7 +552,8 @@ class TestOfFramesetPageInterface extends UnitTestCase {
         $frameset->setField(new SimpleById(22), 'A');
     }
 
-    function testOnlySettingFieldFromFocusedFrame() {
+    function testOnlySettingFieldFromFocusedFrame()
+    {
         $frame1 = new MockSimplePage();
         $frame1->expectOnce('setField', array(new SimpleByLabelOrName('a'), 'A'));
 
@@ -532,7 +567,8 @@ class TestOfFramesetPageInterface extends UnitTestCase {
         $frameset->setField(new SimpleByLabelOrName('a'), 'A');
     }
 
-    function testOnlyGettingFieldFromFocusedFrame() {
+    function testOnlyGettingFieldFromFocusedFrame()
+    {
         $frame1 = new MockSimplePage();
         $frame1->setReturnValue('getField', 'f', array(new SimpleByName('a')));
 
@@ -546,4 +582,5 @@ class TestOfFramesetPageInterface extends UnitTestCase {
         $this->assertIdentical($frameset->getField(new SimpleByName('a')), 'f');
     }
 }
+
 ?>

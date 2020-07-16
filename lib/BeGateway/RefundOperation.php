@@ -15,11 +15,15 @@ class RefundOperation extends ChildTransaction
     protected $_reason;
 
     /**
-     * @param string $reason
+     * @return array[]|mixed
      */
-    public function setReason($reason)
+    protected function _buildRequestMessage()
     {
-        $this->_reason = $reason;
+        $request = parent::_buildRequestMessage();
+
+        $request['request']['reason'] = $this->getReason();
+
+        return $request;
     }
 
     /**
@@ -31,15 +35,11 @@ class RefundOperation extends ChildTransaction
     }
 
     /**
-     * @return array[]|mixed
+     * @param string $reason
      */
-    protected function _buildRequestMessage()
+    public function setReason($reason)
     {
-        $request = parent::_buildRequestMessage();
-
-        $request['request']['reason'] = $this->getReason();
-
-        return $request;
+        $this->_reason = $reason;
     }
 }
 

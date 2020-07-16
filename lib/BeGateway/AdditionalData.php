@@ -39,6 +39,14 @@ class AdditionalData
     }
 
     /**
+     * @return array
+     */
+    public function getContract()
+    {
+        return $this->_contract;
+    }
+
+    /**
      * @param array $contract
      */
     public function setContract($contract)
@@ -49,9 +57,9 @@ class AdditionalData
     /**
      * @return array
      */
-    public function getContract()
+    public function getMeta()
     {
-        return $this->_contract;
+        return $this->_meta;
     }
 
     /**
@@ -60,13 +68,5 @@ class AdditionalData
     public function setMeta($meta)
     {
         $this->_meta = $meta;
-    }
-
-    /**
-     * @return array
-     */
-    public function getMeta()
-    {
-        return $this->_meta;
     }
 }

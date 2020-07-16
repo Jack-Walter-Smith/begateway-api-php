@@ -2,6 +2,8 @@
 
 namespace BeGateway;
 
+use Exception;
+
 /**
  * Class GatewayTransport
  *
@@ -11,9 +13,9 @@ class GatewayTransport
 {
     /**
      * @param string $host
-     * @param array $t_request
-     * @param int $curl_timeout
-     * @param int $curl_connect_timeout
+     * @param array  $t_request
+     * @param int    $curl_timeout
+     * @param int    $curl_connect_timeout
      *
      * @return bool|string
      * @throws \Exception
@@ -47,7 +49,7 @@ class GatewayTransport
         curl_close($process);
 
         if ($response === false) {
-            throw new \Exception("cURL error " . $error);
+            throw new Exception("cURL error " . $error);
         }
 
         Logger::getInstance()->write("Response $response", Logger::DEBUG, get_class());

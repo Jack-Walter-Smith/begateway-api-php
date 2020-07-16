@@ -9,24 +9,26 @@
 include_once(dirname(__FILE__) . '/../eclipse.php');
 Mock::generate('SimpleSocket');
 
-class TestOfEclipse extends UnitTestCase {
-	
-	function testPass() {
-		$listener = &new MockSimpleSocket();
-		
-		$fullpath = realpath(dirname(__FILE__).'/support/test1.php');
-		$testpath = EclipseReporter::escapeVal($fullpath);
-		$expected = "{status:\"pass\",message:\"pass1 at [$testpath line 4]\",group:\"$testpath\",case:\"test1\",method:\"test_pass\"}";
-		//this should work...but it doesn't so the next line and the last line are the hacks
-		//$listener->expectOnce('write',array($expected));
-		$listener->setReturnValue('write',-1);
-		
-		$pathparts = pathinfo($fullpath);
-		$filename = $pathparts['basename'];
-		$test= &new TestSuite($filename);
-		$test->addTestFile($fullpath);
-		$test->run(new EclipseReporter($listener));
-		$this->assertEqual($expected,$listener->output);
-	}
+class TestOfEclipse extends UnitTestCase
+{
+    function testPass()
+    {
+        $listener = &new MockSimpleSocket();
+
+        $fullpath = realpath(dirname(__FILE__) . '/support/test1.php');
+        $testpath = EclipseReporter::escapeVal($fullpath);
+        $expected = "{status:\"pass\",message:\"pass1 at [$testpath line 4]\",group:\"$testpath\",case:\"test1\",method:\"test_pass\"}";
+        //this should work...but it doesn't so the next line and the last line are the hacks
+        //$listener->expectOnce('write',array($expected));
+        $listener->setReturnValue('write', -1);
+
+        $pathparts = pathinfo($fullpath);
+        $filename = $pathparts['basename'];
+        $test = &new TestSuite($filename);
+        $test->addTestFile($fullpath);
+        $test->run(new EclipseReporter($listener));
+        $this->assertEqual($expected, $listener->output);
+    }
 }
+
 ?>

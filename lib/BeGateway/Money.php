@@ -54,42 +54,11 @@ class Money
     }
 
     /**
-     * @param float $amount
+     * @return float|int
      */
-    public function setAmount($amount)
+    private function _currency_multiplyer()
     {
-        $this->_amount = $amount;
-        $this->_cents = NULL;
-    }
-
-    /**
-     * @return float
-     */
-    public function getAmount()
-    {
-        if ($this->_amount) {
-            $amount = $this->_amount;
-        } else {
-            $amount = $this->_cents / $this->_currency_multiplyer();
-        }
-
-        return floatval(strval($amount));
-    }
-
-    /**
-     * @param string $currency
-     */
-    public function setCurrency($currency)
-    {
-        $this->_currency = $currency;
-    }
-
-    /**
-     * @return string
-     */
-    public function getCurrency()
-    {
-        return $this->_currency;
+        return pow(10, $this->_currency_power());
     }
 
     /**
@@ -120,10 +89,41 @@ class Money
     }
 
     /**
-     * @return float|int
+     * @return float
      */
-    private function _currency_multiplyer()
+    public function getAmount()
     {
-        return pow(10, $this->_currency_power());
+        if ($this->_amount) {
+            $amount = $this->_amount;
+        } else {
+            $amount = $this->_cents / $this->_currency_multiplyer();
+        }
+
+        return floatval(strval($amount));
+    }
+
+    /**
+     * @param float $amount
+     */
+    public function setAmount($amount)
+    {
+        $this->_amount = $amount;
+        $this->_cents = NULL;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCurrency()
+    {
+        return $this->_currency;
+    }
+
+    /**
+     * @param string $currency
+     */
+    public function setCurrency($currency)
+    {
+        $this->_currency = $currency;
     }
 }
