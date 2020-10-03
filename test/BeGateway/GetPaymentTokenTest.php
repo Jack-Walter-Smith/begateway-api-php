@@ -118,7 +118,6 @@ class GetPaymentTokenTest extends TestCase
         $auth = $this->getTestObject();
         $arr = array(
             'checkout' => array(
-                'version' => "2.1",
                 'transaction_type' => 'payment',
                 'attempts' => 5,
                 'test' => true,
@@ -294,7 +293,7 @@ class GetPaymentTokenTest extends TestCase
         $auth = $this->getTestObject();
         $auth->money->setAmount(100);
         $auth->money->setCurrency('USD');
-        $erip = new PaymentMethod\Erip(['account_number' => 12345]);
+        $erip = new PaymentMethod\Erip(array('account_number' => 12345));
         $cc = new PaymentMethod\CreditCard();
 
         $auth->addPaymentMethod($erip);
@@ -404,9 +403,9 @@ class GetPaymentTokenTest extends TestCase
         $this->assertTrue($response->isSuccess());
         $this->assertNotNull($response->getToken());
         $this->assertNotNull($response->getRedirectUrl());
-        $this->assertEqual(\BeGateway\Settings::$checkoutBase . '/v2/checkout?token=' . $response->getToken(),
+        $this->assertEqual(\BeGateway\Settings::$checkoutBase . '/widget/hpp.html?token=' . $response->getToken(),
             $response->getRedirectUrl());
-        $this->assertEqual(\BeGateway\Settings::$checkoutBase . '/v2/checkout',
+        $this->assertEqual(\BeGateway\Settings::$checkoutBase . '/widget/hpp.html',
             $response->getRedirectUrlScriptName());
     }
 

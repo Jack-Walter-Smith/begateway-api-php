@@ -23,6 +23,10 @@ abstract class ApiAbstract
      * @var int
      */
     protected $_timeout_read = 30;
+    /**
+     * @var array
+     */
+    protected $_headers = array();
 
     /**
      * @return \BeGateway\Response
@@ -49,8 +53,11 @@ abstract class ApiAbstract
     protected function _remoteRequest()
     {
         return GatewayTransport::submit(
-            $this->_endpoint(), $this->_buildRequestMessage(),
-            $this->_timeout_read, $this->_timeout_connect);
+            $this->_endpoint(),
+            $this->_buildRequestMessage(),
+            $this->_headers,
+            $this->_timeout_read, $this->_timeout_connect
+        );
     }
 
     /**
@@ -112,5 +119,12 @@ abstract class ApiAbstract
     public function setTimeoutRead($timeout)
     {
         $this->_timeout_read = $timeout;
+    }
+
+    /**
+     * @param array $headers
+     */
+    public function setRequestHeaders($headers) {
+        $this->_headers = $headers;
     }
 }

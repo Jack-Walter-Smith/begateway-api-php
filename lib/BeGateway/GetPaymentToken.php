@@ -13,10 +13,6 @@ use Exception;
 class GetPaymentToken extends ApiAbstract
 {
     /**
-     * @var string
-     */
-    public static $version = '2.1';
-    /**
      * @var \BeGateway\Customer
      */
     public $customer;
@@ -84,6 +80,10 @@ class GetPaymentToken extends ApiAbstract
      * @var null|int
      */
     protected $_attempts;
+    /**
+     * @var string[]
+     */
+    protected $_headers = array('X-Api-Version: 2');
 
     /**
      * GetPaymentToken constructor.
