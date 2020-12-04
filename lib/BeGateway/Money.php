@@ -75,7 +75,7 @@ class Money
             'SLL' => 0, 'STD' => 0, 'UYI' => 0, 'VND' => 0,
             'XAF' => 0, 'XOF' => 0, 'XPF' => 0, 'MOP' => 1,
             'JOD' => 3, 'KWD' => 3, 'LYD' => 3, 'OMR' => 3,
-            'BYN' => 0, 'CVE' => 0, 'IRR' => 0, 'KRW' => 0,
+            'BYN' => 2, 'CVE' => 0, 'IRR' => 0, 'KRW' => 0,
             'RWF' => 0, 'VUV' => 0, 'BHD' => 3, 'TND' => 3,
         );
 
