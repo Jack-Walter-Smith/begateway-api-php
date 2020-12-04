@@ -14,11 +14,12 @@ class GatewayTransport
     /**
      * @param string $host
      * @param array  $t_request
+     * @param array  $headers
      * @param int    $curl_timeout
      * @param int    $curl_connect_timeout
      *
      * @return bool|string
-     * @throws \Exception
+     * @throws Exception
      */
     public static function submit($host, $t_request, $headers = array(), $curl_timeout = 30, $curl_connect_timeout = 10)
     {

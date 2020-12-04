@@ -504,12 +504,12 @@ class GetPaymentToken extends ApiAbstract
 
     /**
      * @return array[]|mixed
+     * @throws Exception
      */
     protected function _buildRequestMessage()
     {
         $request = array(
             'checkout' => array(
-                'version' => self::$version,
                 'transaction_type' => $this->getTransactionType(),
                 'attempts' => $this->getAttempts(),
                 'test' => $this->getTestMode(),
